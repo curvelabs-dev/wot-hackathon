@@ -1,6 +1,7 @@
 import { Orbis } from "@orbisclub/orbis-sdk";
 import { singleton } from "aurelia-framework";
-import { GroupMemberStream, OrbisUser } from "types";
+import { USER_FIRST } from "shared/constants";
+import { DID, GroupMemberStream, OrbisUser } from "types";
 import { _DevService } from "./_DevService";
 
 const group_id =
@@ -8,18 +9,19 @@ const group_id =
 
 @singleton(false)
 export class OrbisService {
-  // orbis = new Orbis();
-  orbis;
-  initiated = false;
-  user: OrbisUser;
-  groupMembers: GroupMemberStream[];
+  // public orbis = new Orbis();
+  public orbis;
+  public initiated = false;
+  // @ts-ignore
+  public connectedUser: OrbisUser = { did: USER_FIRST.did };
+  public groupMembers: GroupMemberStream[];
 
   constructor() {
     _DevService.OrbisService = this;
   }
 
   async initOrbisData() {
-    // this.user = await this.loadOrbisUser();
+    // this.connectedUser = await this.loadOrbisUser();
     // await this.loadOrbisGroup();
     // this.groupMembers = await this.loadOrbisGroupMember();
 
@@ -29,7 +31,7 @@ export class OrbisService {
   async loadOrbisUser() {
     const user = await checkUserIsConnected(this.orbis);
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: app.ts ~ line 22 ~ user', user)
-    return user
+    return user;
   }
 
   async loadOrbisGroup() {
@@ -43,7 +45,24 @@ export class OrbisService {
     // const members = data[0].collection
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 44 ~ members', members)
 
-    return data as GroupMemberStream[]
+    return data as GroupMemberStream[];
+  }
+
+  /**
+   * @param didFollowing Did of the user following
+   * @param didFollowed Did of the user being followed
+   */
+  public async isFollowing(didFollowing: DID, didFollowed: DID) {
+    const { data, error } = await this.orbis.getIsFollowing(
+      didFollowing,
+      didFollowed
+    );
+
+    if (error) {
+      console.error(error);
+    }
+
+    return data;
   }
 
   /**

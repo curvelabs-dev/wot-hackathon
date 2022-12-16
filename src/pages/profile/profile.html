@@ -19,8 +19,8 @@
               <p class="tertiary">0</p>
             </div>
           </div>
-          <div class="center mtop-10">
-            <div class="btn green-border flex pointer">
+          <div if.bind="!isSameUser" class="center mtop-10">
+            <div click.delegate="handleFollow()" class="btn green-border flex pointer">
               <img
                 src="/static/img/icons/check-green.png"
                 class="mright-5"
