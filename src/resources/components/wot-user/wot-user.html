@@ -6,7 +6,9 @@
     </div>
     <!-- address -->
     <div class="user-details-container">
-      <div class="name">${shortenedAddress}</div>
+      <div class="name">
+        <a click.delegate="router.navigate(`/profile/${did}`)" href="${`/profile/${did}`}">${shortenedAddress}</a>
+      </div>
       <div class="badge black">${shortenedAddress}</div>
     </div>
   </div>

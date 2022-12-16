@@ -22,6 +22,8 @@
     <div class="navigation-container">
       <div class="navbarContainer">
         <button click.delegate="router.navigate('/')">Home</button>
+        <button click.delegate="router.navigate('/group')">Group</button>
+        <button click.delegate="router.navigate('/profile/did:pkh:eip155:1:0xb86fa0cfeea21558df988ad0ae22f92a8ef69ac1')">Profile</button>
         <button click.delegate="router.navigate('/playground')">
           Playground
         </button>
@@ -42,7 +44,9 @@
           </div>
         </div>
         <h3>MEMBERS</h3>
-        <div class="mbottom-15"></div>
+        <div class="mbottom-15">
+          <wot-user repeat.for="member of orbisService.groupMembers" address.bind="member.did"></wot-user>
+        </div>
       </div>
     </div>
   </div>

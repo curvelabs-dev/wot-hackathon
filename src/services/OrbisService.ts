@@ -1,6 +1,6 @@
 import { Orbis } from "@orbisclub/orbis-sdk";
 import { singleton } from "aurelia-framework";
-import { OrbisUser } from "types";
+import { GroupMemberStream, OrbisUser } from "types";
 import { _DevService } from "./_DevService";
 
 const group_id =
@@ -12,14 +12,16 @@ export class OrbisService {
   orbis;
   initiated = false;
   user: OrbisUser;
+  groupMembers: GroupMemberStream[];
 
   constructor() {
     _DevService.OrbisService = this;
   }
 
   async initOrbisData() {
-    this.user = await this.loadOrbisUser();
-    await this.loadOrbisGroups();
+    // this.user = await this.loadOrbisUser();
+    // await this.loadOrbisGroup();
+    // this.groupMembers = await this.loadOrbisGroupMember();
 
     this.initiated = true;
   }
@@ -30,9 +32,18 @@ export class OrbisService {
     return user
   }
 
-  async loadOrbisGroups() {
-    // const { data, error } = await orbis.getGroup(group_id);
-    // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: app.ts ~ line 18 ~ data', data)
+  async loadOrbisGroup() {
+    const { data, error } = await this.orbis.getGroup(group_id);
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: app.ts ~ line 18 ~ data', data)
+  }
+
+  async loadOrbisGroupMember(): Promise<GroupMemberStream[]> {
+    const { data, error, status } = await this.orbis.getGroupMembers(group_id);
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 42 ~ data', data)
+    // const members = data[0].collection
+    // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 44 ~ members', members)
+
+    return data as GroupMemberStream[]
   }
 
   /**
