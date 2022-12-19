@@ -3,6 +3,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "module": "esnext",
+    "types": ["./src/Orbis.d.ts"],
     "typeRoots": [
       "./node_modules/@types"
     ],

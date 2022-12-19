@@ -7,24 +7,26 @@ import makeBlockie from "ethereum-blockies-base64";
 @autoinject
 export class WotUser {
   @bindable pfp: string;
-  @bindable address: Address = USER_FIRST.address;
   @bindable did: DID = USER_FIRST.did;
+  @bindable address: Address;
 
   private finalPfp: string;
-  private finalAddress: string;
   private shortenedAddress: string;
 
   constructor(private router: Router) {}
 
   attached() {
-    this.finalAddress = useDidToAddress(this.address);
+    if (!this.address) {
+      this.address = useDidToAddress(this.did);
+    }
+
     this.finalPfp = this.pfp ?? makeBlockie(useDidToAddress(this.address));
 
-    const addressLength = this.finalAddress.length;
-    this.shortenedAddress = `${this.finalAddress.slice(
-      0,
-      4
-    )}...${this.finalAddress.slice(addressLength - 4, addressLength)}`;
+    const addressLength = this.address.length;
+    this.shortenedAddress = `${this.address.slice(0, 4)}...${this.address.slice(
+      addressLength - 4,
+      addressLength
+    )}`;
   }
 }
 

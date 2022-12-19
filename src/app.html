@@ -46,7 +46,7 @@
         </div>
         <h3>MEMBERS</h3>
         <div class="mbottom-15">
-          <wot-user repeat.for="member of orbisService.groupMembers" address.bind="member.did"></wot-user>
+          <wot-user repeat.for="member of orbisService.groupMembers" did.bind="member.did || member.profile_details.did"></wot-user>
         </div>
       </div>
     </div>

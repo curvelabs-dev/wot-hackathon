@@ -4,7 +4,7 @@
       <div class="item-group-label">PROFILE</div>
       <div class="group-menu">
         <div class="profile-details">
-          <wot-user></wot-user>
+          <wot-user did.bind="did"></wot-user>
           <!-- Twitter -->
           <div></div>
           <!-- Github -->
@@ -20,7 +20,13 @@
             </div>
           </div>
           <div if.bind="!isSameUser" class="center mtop-10">
-            <div click.delegate="handleFollow()" class="btn green-border flex pointer">
+            <!-- Not Following -->
+            <template if.bind="!isFollowing">
+              <button class="btn purple">Follow</button>
+            </template>
+
+            <!-- Following -->
+            <div if.bind="isFollowing" click.delegate="handleFollow()" class="btn green-border flex pointer">
               <img
                 src="/static/img/icons/check-green.png"
                 class="mright-5"

@@ -81,6 +81,11 @@ li {
   font-size: 15px;
   font-family: 'Ubuntu', sans-serif;
   color: var(--color-text-primary);
+  background: var(--color-background-secondary);
+}
+
+input::placeholder {
+  color: var(--color-text-secondary);
 }
 
 li {

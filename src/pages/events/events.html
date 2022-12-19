@@ -1,13 +1,98 @@
 <template>
-  <div>Event Name (TODO)</div>
-  <div>Event Description (TODO)</div>
-  <div>Event Time (TODO)</div>
-  <div>Event Place/URL (TODO)</div>
+  <div class="eventsPageContainer">
+    <div class="eventsHeader">
+      <!-- Existing Events -->
+      <h2>${isCreateEvent ? "Create Event" : "Existing Events"}</h2>
+      <!-- Create Event -->
+      <button if.bind="!isCreateEvent" click.delegate="enableCreateEvent()">
+        Create New Event
+      </button>
+      <button if.bind="isCreateEvent" click.delegate="cancelCreateEvent()">
+        Cancel
+      </button>
+    </div>
 
-  <!-- List of Eth addresses -->
-  <div>Attendees (TODO)</div>
-  test
+    <div class="eventsContainer">
+      <!-- CreateEvent -->
+      <div if.bind="isCreateEvent" class="createEventContainer">
+        <div class="createEvent__form">
+          <div class="createEvent_formGroup">
+            <h4 class="createEvent__formLabel">Event Name</h4>
+            <input
+              class="createEvent__formInput"
+              value.bind="newEventName"
+              placeholder="Event Name"
+            />
+          </div>
 
-  <div>Join (TODO)</div>
-  <div>Invite (TODO)</div>
+          <div class="createEvent_formGroup">
+            <h4 class="createEvent__formLabel">Event Description</h4>
+            <input
+              class="createEvent__formInput"
+              value.bind="newEventDescription"
+              placeholder="Event Description"
+            />
+          </div>
+
+          <div class="createEvent_formGroup">
+            <h4 class="createEvent__formLabel">Event Time</h4>
+            <input
+              type="date"
+              class="createEvent__formInput"
+              value.bind="newEventTime"
+              placeholder="Event Time"
+            />
+          </div>
+
+          <div class="createEvent_formGroup">
+            <h4 class="createEvent__formLabel">Event Url</h4>
+            <input
+              type="url"
+              value.bind="newEventUrl"
+              placeholder="https://event-url.com"
+              pattern="https://.*"
+            />
+          </div>
+
+          <div class="createEvent_formGroup">
+            <h4 class="createEvent__formLabel">Event Attendees</h4>
+            <input
+              class="createEvent__formInput"
+              value.bind="newEventAttendees"
+              placeholder="Event Attendees"
+            />
+          </div>
+
+          <div class="createEvent__footer"><button click.delegate="createEvent()" class="btn purple">Create Event</button></div>
+        </div>
+      </div>
+
+      <!-- ExistingEvents -->
+      <div else class="existingEventsContainer">
+        <div class="eventCard">
+          <h4>Event Name (TODO)</h4>
+
+          <section class="eventCard__description">
+            Event Description lorem lor (TODO) Lorem ipsum dolor sit amet
+            consectetur adipisicing elit. Maxime fugit mollitia veniam ad
+            voluptatibus! Dolor at facere dignissimos temporibus magni
+            praesentium in expedita veritatis, exercitationem nostrum odit
+            itaque, pariatur accusamus.
+          </section>
+
+          <section class="eventCard__subData">
+            <div>Event Time (TODO)</div>
+            <div>Event Place/URL (TODO)</div>
+            <!-- List of Eth addresses -->
+            <div>Attendees (TODO)</div>
+          </section>
+
+          <footer class="eventCard__footer">
+            <div>Invite (TODO)</div>
+            <div>Join (TODO)</div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>

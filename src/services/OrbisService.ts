@@ -1,6 +1,7 @@
 import { Orbis } from "@orbisclub/orbis-sdk";
 import { singleton } from "aurelia-framework";
 import { USER_FIRST } from "shared/constants";
+import { ORBIS_GROUP_MEMBERS } from "shared/fixtures";
 import { DID, GroupMemberStream, OrbisUser } from "types";
 import { _DevService } from "./_DevService";
 
@@ -9,8 +10,8 @@ const group_id =
 
 @singleton(false)
 export class OrbisService {
-  // public orbis = new Orbis();
-  public orbis;
+  // public orbis;
+  public orbis: IOrbis = new Orbis();
   public initiated = false;
   // @ts-ignore
   public connectedUser: OrbisUser = { did: USER_FIRST.did };
@@ -21,9 +22,10 @@ export class OrbisService {
   }
 
   async initOrbisData() {
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 26 ~ this.orbis', this.orbis)
     // this.connectedUser = await this.loadOrbisUser();
     // await this.loadOrbisGroup();
-    // this.groupMembers = await this.loadOrbisGroupMember();
+    this.groupMembers = await this.loadOrbisGroupMember();
 
     this.initiated = true;
   }
@@ -40,8 +42,9 @@ export class OrbisService {
   }
 
   async loadOrbisGroupMember(): Promise<GroupMemberStream[]> {
-    const { data, error, status } = await this.orbis.getGroupMembers(group_id);
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 42 ~ data', data)
+    // const { data, error, status } = await this.orbis.getGroupMembers(group_id);
+    const data = ORBIS_GROUP_MEMBERS
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 45 ~ data', data)
     // const members = data[0].collection
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 44 ~ members', members)
 

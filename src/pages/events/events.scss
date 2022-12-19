@@ -1,0 +1,39 @@
+.eventsPageContainer {
+  width: 100%;
+
+  .eventsHeader {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .eventsContainer {
+    .createEventContainer {
+      .createEvent__form {}
+
+      .createEvent__footer {
+        display: flex;
+        justify-content: end;
+      }
+    }
+
+    .eventCard {
+      >* {
+        margin: 10px 0;
+      }
+
+      .eventCard__subData {
+        display: flex;
+        justify-content: space-evenly;
+      }
+
+      .eventCard__footer {
+        display: flex;
+        justify-content: end;
+
+        div {
+          margin: 0 10px;
+        }
+      }
+    }
+  }
+}
