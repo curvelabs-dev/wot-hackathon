@@ -8,10 +8,24 @@ import { _DevService } from "./_DevService";
 const group_id =
   "kjzl6cwe1jw147lv17xkl7679toynk5lkbotwhcabvgho0qumzjsyzpay2ug9ei"; // wot-hackathon
 
+class MockOrbis {
+  getIsFollowing(a, b) {
+    return { data: false, error: undefined };
+  }
+
+  getGroup(id) {
+    return { data: {}, error: {} };
+  }
+
+  setFollow(did, bool) {
+    return;
+  }
+}
+
 @singleton(false)
 export class OrbisService {
-  // public orbis;
-  public orbis: IOrbis = new Orbis();
+  public orbis = new MockOrbis();
+  // public orbis: IOrbis = new Orbis();
   public initiated = false;
   // @ts-ignore
   public connectedUser: OrbisUser = { did: USER_FIRST.did };
@@ -43,7 +57,7 @@ export class OrbisService {
 
   async loadOrbisGroupMember(): Promise<GroupMemberStream[]> {
     // const { data, error, status } = await this.orbis.getGroupMembers(group_id);
-    const data = ORBIS_GROUP_MEMBERS
+    const data = ORBIS_GROUP_MEMBERS;
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 45 ~ data', data)
     // const members = data[0].collection
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 44 ~ members', members)

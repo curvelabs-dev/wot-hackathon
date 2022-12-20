@@ -1,5 +1,7 @@
 import { autoinject, PLATFORM } from "aurelia-framework";
 import { Router, RouterConfiguration } from "aurelia-router";
+import LitConnectModal from "lit-connect-modal";
+import WalletConnectProvider from "@walletconnect/ethereum-provider";
 
 import { OrbisService } from "services/OrbisService";
 import { WalletService } from "services/WalletService";
@@ -13,6 +15,7 @@ import "./styles/utilities.css";
 import "./styles/responsive.css";
 import "./styles/Home.css";
 import "./app.scss";
+import { LitActionsService } from "services/LitActionsService";
 
 @autoinject
 export class App {
@@ -22,15 +25,58 @@ export class App {
 
   constructor(
     private orbisService: OrbisService,
+    private litActionsService: LitActionsService,
     private router: Router,
     private walletService: WalletService
-  ) {}
+  ) {
+    document.addEventListener(
+      "lit-ready",
+      function (e) {
+        console.log(">>> LIT network is ready");
+      },
+      false
+    );
+  }
 
   async attached(): Promise<void> {
-    await this.walletService.connect();
+    this.litModelInit();
+
+    // await this.walletService.connect();
     await this.orbisService.initOrbisData();
 
+    await this.litActionsService.helloWorld();
+
     // const res = await this.orbisService.followUser(USER_SECOND.did)
+  }
+
+  async litModelInit() {
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider, // required
+        options: {
+          infuraId: "cd614bfa5c2f4703b7ab0ec0547d9f81",
+          rpc: {
+            1: "https://eth-mainnet.alchemyapi.io/v2/EuGnkVlzVoEkzdg0lpCarhm8YHOxWVxE",
+            5: "https://goerli.infura.io/v3/96dffb3d8c084dec952c61bd6230af34"
+          },
+          chainId: 5,
+        },
+      },
+    };
+
+    console.log(
+      "hehehe ------------------------------------------------------------------------------------------"
+    );
+
+    const dialog = new LitConnectModal({
+      providerOptions,
+    });
+    let provider;
+    try {
+      provider = await dialog.getWalletProvider();
+    } catch (error) {
+      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: eth.js ~ line 87 ~ error', error)
+    }
   }
 
   private checkReadyForLaunch() {
@@ -72,7 +118,7 @@ export class App {
         moduleId: PLATFORM.moduleName("./pages/events/events"),
         nav: true,
         name: "events",
-        route: [ "events"],
+        route: ["events"],
         title: "Events",
       },
       {

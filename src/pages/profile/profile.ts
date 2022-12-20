@@ -33,16 +33,24 @@ export class Profile {
   private handleFollow() {
     if (this.isSameUser) return;
 
-    if (
-      this.orbisService.isFollowing(
-        this.orbisService.connectedUser.did,
-        this.did
-      )
-    ) {
-      this.orbisService.unfollowUser(this.did);
+    if (this.isFollowing) {
+      this.unfollow();
       return;
     }
 
+    this.follow();
+  }
+
+  private follow() {
+    // Lit Actions
+
+    // sigil
+
+    // orbis follow
+    this.orbisService.followUser(this.did);
+  }
+
+  private unfollow() {
     this.orbisService.followUser(this.did);
   }
 }

@@ -22,11 +22,17 @@
           <div if.bind="!isSameUser" class="center mtop-10">
             <!-- Not Following -->
             <template if.bind="!isFollowing">
-              <button class="btn purple">Follow</button>
+              <button class="btn purple" click.delegate="follow()">
+                Follow
+              </button>
             </template>
 
             <!-- Following -->
-            <div if.bind="isFollowing" click.delegate="handleFollow()" class="btn green-border flex pointer">
+            <div
+              if.bind="isFollowing"
+              click.delegate="handleFollow()"
+              class="btn green-border flex pointer"
+            >
               <img
                 src="/static/img/icons/check-green.png"
                 class="mright-5"
