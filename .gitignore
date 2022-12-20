@@ -37,3 +37,6 @@ node_modules
 /src/environment.ts
 /dist
 /test/coverage-jest
+
+#
+env.json
