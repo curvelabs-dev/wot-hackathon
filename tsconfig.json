@@ -3,29 +3,20 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "module": "esnext",
-    "types": ["./src/Orbis.d.ts"],
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./node_modules/@types"],
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
     "target": "es5",
-    "lib": [
-      "es2015",
-      "dom"
-    ],
+    "lib": ["es2015", "dom"],
     "moduleResolution": "node",
     "baseUrl": "src",
     "resolveJsonModule": true,
     "importHelpers": true,
     "allowJs": true
   },
-  "include": [
-    "src",
-    "test"
-  ],
+  "include": ["src", "src/Orbis.d.ts", "test"],
   "atom": {
     "rewriteTsconfig": false
   }
