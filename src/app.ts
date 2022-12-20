@@ -44,10 +44,16 @@ export class App {
         console.clear();
       }
     });
+
+    /**
+     * Else lit modal for getting authSig does not open.
+     * I looked into the lit-connect-modal package to find that out
+     */
+    window.localStorage.setItem("lit-web3-provider", "metamask");
   }
 
   async attached(): Promise<void> {
-    this.litModelInit();
+    // this.litModalInit();
 
     await this.walletService.connect();
     await this.orbisService.initOrbisData();
@@ -59,7 +65,7 @@ export class App {
     // const res = await this.orbisService.followUser(USER_SECOND.did)
   }
 
-  async litModelInit() {
+  async litModalInit() {
     const providerOptions = {
       walletconnect: {
         package: WalletConnectProvider, // required
