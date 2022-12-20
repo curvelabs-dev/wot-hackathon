@@ -1,5 +1,6 @@
 import { autoinject, computedFrom } from "aurelia-framework";
 import { activationStrategy } from "aurelia-router";
+import { LitActionsService } from "services/LitActionsService";
 import { OrbisService } from "services/OrbisService";
 import { DID } from "types";
 
@@ -14,12 +15,16 @@ export class Profile {
     return isSame;
   }
 
-  constructor(private orbisService: OrbisService) {}
+  constructor(
+    private orbisService: OrbisService,
+    private litActionsService: LitActionsService
+  ) {}
 
   async activate(params: { did: DID }): Promise<void> {
     this.did = params.did;
 
-    this.isFollowing = await this.orbisService.isFollowing(
+    // this.isFollowing = await this.orbisService.isFollowing(
+    this.isFollowing = await this.orbisService.rawIsFollowing(
       this.orbisService.connectedUser.did,
       this.did
     );
@@ -52,5 +57,14 @@ export class Profile {
 
   private unfollow() {
     this.orbisService.followUser(this.did);
+  }
+
+  private trust() {
+    const isFollowing_orbisApi = this.litActionsService.isFollowing_rawOrbisApi(
+      this.orbisService.connectedUser.did,
+      this.did
+    )
+
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 69 ~ isFollowing_orbisApi', isFollowing_orbisApi)
   }
 }

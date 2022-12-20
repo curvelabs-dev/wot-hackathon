@@ -1,14 +1,23 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Orbis } from "@orbisclub/orbis-sdk";
 import { singleton } from "aurelia-framework";
 import { USER_FIRST } from "shared/constants";
 import { ORBIS_GROUP_MEMBERS } from "shared/fixtures";
 import { DID, GroupMemberStream, OrbisUser } from "types";
+
 import { _DevService } from "./_DevService";
+import ENV from "../../env.json";
 
 const group_id =
   "kjzl6cwe1jw147lv17xkl7679toynk5lkbotwhcabvgho0qumzjsyzpay2ug9ei"; // wot-hackathon
 
 class MockOrbis {
+  public api = {
+    restUrl: "https://ylgfjdlgyjmdikqavpcj.supabase.co/rest/v1",
+    // @ts-ignore
+    supabaseKey: ENV.supabaseKey,
+  };
+
   getIsFollowing(a, b) {
     return { data: false, error: undefined };
   }
@@ -24,19 +33,26 @@ class MockOrbis {
 
 @singleton(false)
 export class OrbisService {
-  public orbis = new MockOrbis();
-  // public orbis: IOrbis = new Orbis();
+  // public orbis = new MockOrbis();
+  public orbis: IOrbis = new Orbis();
   public initiated = false;
   // @ts-ignore
   public connectedUser: OrbisUser = { did: USER_FIRST.did };
   public groupMembers: GroupMemberStream[];
+  public baseUrl: string;
+  public apiKey: string;
 
   constructor() {
     _DevService.OrbisService = this;
+
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 45 ~ this.orbis', this.orbis)
+    // @ts-ignore
+    this.baseUrl = this.orbis.api.restUrl;
+    // @ts-ignore
+    this.apiKey = this.orbis.api.supabaseKey;
   }
 
   async initOrbisData() {
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 26 ~ this.orbis', this.orbis)
     // this.connectedUser = await this.loadOrbisUser();
     // await this.loadOrbisGroup();
     this.groupMembers = await this.loadOrbisGroupMember();
@@ -80,6 +96,28 @@ export class OrbisService {
     }
 
     return data;
+  }
+
+  /**
+   * Call Orbis API directly.
+   *
+   * // const url = `${this.baseUrl}/orbis_v_followers?select=details:did_followed_details&did_following=eq.${didFollowing}&active=eq.true` // all followers?
+   *
+   * @param didFollowing Did of the user following
+   * @param didFollowed Did of the user being followed
+   */
+  public async rawIsFollowing(didFollowing: DID, didFollowed: DID) {
+    const url = `${this.baseUrl}/orbis_v_followers?select=*&did_following=eq.${didFollowing}&did_followed=eq.${didFollowed}&active=eq.true`;
+
+    const rawResponse = await fetch(url, {
+      headers: {
+        apikey: this.apiKey,
+      },
+    });
+    const response = await rawResponse.json();
+
+    const isFollowing = response[0].active === "true";
+    return isFollowing;
   }
 
   /**

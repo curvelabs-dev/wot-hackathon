@@ -6,6 +6,7 @@ import WalletConnectProvider from "@walletconnect/ethereum-provider";
 import { OrbisService } from "services/OrbisService";
 import { WalletService } from "services/WalletService";
 import { _DevService } from "services/_DevService";
+import { LitActionsService } from "services/LitActionsService";
 import "./types";
 import { myExpect } from "modules/expect";
 import { USER_SECOND } from "shared/constants";
@@ -15,7 +16,7 @@ import "./styles/utilities.css";
 import "./styles/responsive.css";
 import "./styles/Home.css";
 import "./app.scss";
-import { LitActionsService } from "services/LitActionsService";
+import { publicKey } from "../env.json";
 
 @autoinject
 export class App {
@@ -36,15 +37,24 @@ export class App {
       },
       false
     );
+
+    // DEV
+    document.addEventListener("keydown", (ev: KeyboardEvent) => {
+      if (ev.key === "c") {
+        console.clear();
+      }
+    });
   }
 
   async attached(): Promise<void> {
     this.litModelInit();
 
-    // await this.walletService.connect();
+    await this.walletService.connect();
     await this.orbisService.initOrbisData();
 
-    await this.litActionsService.helloWorld();
+    await this.litActionsService.connect();
+
+    // await this.litActionsService.isFollowing_rawOrbisApi(litActionCode);
 
     // const res = await this.orbisService.followUser(USER_SECOND.did)
   }
@@ -57,7 +67,7 @@ export class App {
           infuraId: "cd614bfa5c2f4703b7ab0ec0547d9f81",
           rpc: {
             1: "https://eth-mainnet.alchemyapi.io/v2/EuGnkVlzVoEkzdg0lpCarhm8YHOxWVxE",
-            5: "https://goerli.infura.io/v3/96dffb3d8c084dec952c61bd6230af34"
+            5: "https://goerli.infura.io/v3/96dffb3d8c084dec952c61bd6230af34",
           },
           chainId: 5,
         },
