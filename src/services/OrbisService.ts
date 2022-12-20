@@ -116,6 +116,10 @@ export class OrbisService {
     });
     const response = await rawResponse.json();
 
+    if (response.length === 0) {
+      return false;
+    }
+
     const isFollowing = response[0].active === "true";
     return isFollowing;
   }

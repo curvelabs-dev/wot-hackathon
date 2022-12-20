@@ -789,6 +789,12 @@ ul.tertiary li {
   color: var(--color-text-primary);
 }
 
+.btn.disabled {
+  background: linear-gradient(99.44deg, var(--color-border-secondary) 0%, var(--color-border-secondary) 105.18%);
+  color: var(--color-text-primary);
+  cursor: default;
+}
+
 .btn.purple:hover {
   background: #6C6AFB;
 }

@@ -33,4 +33,11 @@ export interface GroupMemberStream {
   };
 }
 
+export interface ILitActionSignatureResponse {
+  signatures: unknown;
+  decryptions: unknown;
+  response: string;
+  logs: string,
+}
+
 export {};

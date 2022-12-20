@@ -3,7 +3,7 @@ import LitJsSdk from "lit-js-sdk";
 import { OrbisService } from "./OrbisService";
 import { publicKey } from "../../env.json";
 import { autoinject } from "aurelia-framework";
-import { DID } from "types";
+import { DID, ILitActionSignatureResponse } from "types";
 
 @autoinject
 export class LitActionsService {
@@ -48,6 +48,10 @@ export class LitActionsService {
         });
         const response = await rawResponse.json();
 
+        if (response.length === 0) {
+          return false;
+        }
+
         // Lit.Actions.setResponse({ response: JSON.stringify(response) });
         const isFollowing = response[0].active === "true";
 
@@ -61,23 +65,18 @@ export class LitActionsService {
       go();
     `;
 
-    code
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 75 ~ code', code)
-    // return
+    const signatures = (await this.litNodeClient.executeJs({
+      code,
+      authSig: this.authSig,
+      // all jsParams can be used anywhere in your litActionCode
+      jsParams: {
+        publicKey: publicKey,
+        sigName: "sig1",
+      },
+    })) as ILitActionSignatureResponse;
 
-    const runLitAction = async () => {
-      const signatures = await this.litNodeClient.executeJs({
-        code,
-        authSig: this.authSig,
-        // all jsParams can be used anywhere in your litActionCode
-        jsParams: {
-          publicKey: publicKey,
-          sigName: "sig1",
-        },
-      });
-      console.log("signatures: ", signatures);
-    };
+    const isFollowing = Object.keys(signatures.signatures).length > 0
 
-    runLitAction();
+    return isFollowing;
   }
 }

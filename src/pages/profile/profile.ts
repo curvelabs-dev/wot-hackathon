@@ -8,6 +8,7 @@ import { DID } from "types";
 export class Profile {
   did: DID;
   private isFollowing: boolean;
+  private isTrusting: boolean;
 
   @computedFrom("did", "orbisService.connectedUser.did")
   get isSameUser() {
@@ -59,12 +60,10 @@ export class Profile {
     this.orbisService.followUser(this.did);
   }
 
-  private trust() {
-    const isFollowing_orbisApi = this.litActionsService.isFollowing_rawOrbisApi(
+  private async trust() {
+    this.isTrusting = await this.litActionsService.isFollowing_rawOrbisApi(
       this.orbisService.connectedUser.did,
       this.did
-    )
-
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 69 ~ isFollowing_orbisApi', isFollowing_orbisApi)
+    );
   }
 }
