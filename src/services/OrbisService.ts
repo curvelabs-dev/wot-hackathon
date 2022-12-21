@@ -23,18 +23,25 @@ class MockOrbis {
   }
 
   getGroup(id) {
-    return { data: {}, error: {} };
+    return { data: {}, error: undefined };
   }
 
   setFollow(did, bool) {
     return;
   }
+
+  getGroupMembers(group_id: string) {
+    return {
+      data: ORBIS_GROUP_MEMBERS,
+      error: undefined,
+    }
+  }
 }
 
 @singleton(false)
 export class OrbisService {
-  // public orbis = new MockOrbis();
-  public orbis: IOrbis = new Orbis();
+  public orbis = new MockOrbis();
+  // public orbis: IOrbis = new Orbis();
   public initiated = false;
   // @ts-ignore
   public connectedUser: OrbisUser = { did: USER_FIRST.did };
@@ -45,7 +52,6 @@ export class OrbisService {
   constructor() {
     _DevService.OrbisService = this;
 
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 45 ~ this.orbis', this.orbis)
     // @ts-ignore
     this.baseUrl = this.orbis.api.restUrl;
     // @ts-ignore
@@ -72,8 +78,7 @@ export class OrbisService {
   }
 
   async loadOrbisGroupMember(): Promise<GroupMemberStream[]> {
-    // const { data, error, status } = await this.orbis.getGroupMembers(group_id);
-    const data = ORBIS_GROUP_MEMBERS;
+    const { data, error } = await this.orbis.getGroupMembers(group_id);
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 45 ~ data', data)
     // const members = data[0].collection
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 44 ~ members', members)

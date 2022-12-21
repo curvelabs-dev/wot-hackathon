@@ -24,8 +24,8 @@ export class Profile {
   async activate(params: { did: DID }): Promise<void> {
     this.did = params.did;
 
-    // this.isFollowing = await this.orbisService.isFollowing(
-    this.isFollowing = await this.orbisService.rawIsFollowing(
+    this.isFollowing = await this.orbisService.isFollowing(
+    // this.isFollowing = await this.orbisService.rawIsFollowing(
       this.orbisService.connectedUser.did,
       this.did
     );

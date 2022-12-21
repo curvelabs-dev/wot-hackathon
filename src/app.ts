@@ -58,7 +58,7 @@ export class App {
     await this.walletService.connect();
     await this.orbisService.initOrbisData();
 
-    await this.litActionsService.connect();
+    // await this.litActionsService.connect();
 
     // await this.litActionsService.isFollowing_rawOrbisApi(litActionCode);
 

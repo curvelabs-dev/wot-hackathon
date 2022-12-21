@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import LitJsSdk from "lit-js-sdk";
 import { OrbisService } from "./OrbisService";
 import { publicKey } from "../../env.json";
 import { autoinject } from "aurelia-framework";
@@ -14,6 +13,7 @@ export class LitActionsService {
   constructor(private orbisService: OrbisService) {}
 
   public async connect() {
+    const LitJsSdk = await import("lit-js-sdk");
     // @ts-ignore
     const litNodeClient = new LitJsSdk.LitNodeClient({
       litNetwork: "serrano",
