@@ -17,6 +17,7 @@
     "aurelia-bootstrapper": "^2.4.0",
     "aurelia-framework": "^1.4.1",
     "ethereum-blockies-base64": "^1.0.2",
+    "ethers": "^5.7.2",
     "lit-connect-modal": "^0.1.10",
     "lit-js-sdk": "^1.2.57"
   },
