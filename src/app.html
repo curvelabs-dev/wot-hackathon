@@ -1,16 +1,16 @@
 <template>
   <!-- devStatusContainer -->
   <div class="devStatusContainer">
-    <section>Orbis: ${!!_DevService.isOrbisActive}</section>
+    <section>Connected: ${!!_DevService.runConnected}</section>
 
     <section>
-      <div if.bind="orbisService.user">
-        Connected as ${orbisService.user.metadata.address}
+      <div if.bind="walletService.defaultAccountAddress">
+        Wallet connected: ${walletService.defaultAccountAddress}
       </div>
-      <template else>
-        <div>Connection status: ${connectionStatus}</div>
-        <button if.bind="connectionStatus === false">Connect</button>
-      </template>
+      <button if.bind="connectionStatus === false">Connect (TODO)</button>
+      <div if.bind="orbisService.connectedUser.did">
+        Orbis connected: ${orbisService.connectedUser.did}
+      </div>
     </section>
 
     <button click.delegate="checkReadyForLaunch()">Ready for Launch</button>
@@ -46,8 +46,8 @@
         <div class="top-right hide-tablet">
           <div class="relative flex-row v-align-items-center">
             <wot-user
-              if.bind="walletService.defaultAccountAddressDid"
-              did.bind="walletService.defaultAccountAddressDid"
+              if.bind="walletService.defaultAccountDid"
+              did.bind="walletService.defaultAccountDid"
             ></wot-user>
           </div>
         </div>

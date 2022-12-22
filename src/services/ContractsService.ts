@@ -9,6 +9,7 @@ import { BaseProvider, JsonRpcProvider } from "@ethersproject/providers";
 import { WalletService } from "./WalletService";
 import { isLocalhostNetwork } from "modules/networks";
 import { Address } from "types";
+import { TrustSigil } from "contracts/types";
 
 @autoinject
 export class ContractsService {
@@ -26,6 +27,17 @@ export class ContractsService {
     private walletService: WalletService
   ) {
     ContractsService.Contracts.delete(ContractNames.BadgerCore);
+  }
+
+  public async listenToEvents(): Promise<void> {
+    const TrustSigilContract = await this.getTrustSigilContract();
+
+    const SigilMinted = TrustSigilContract.filters.SigilMinted();
+    TrustSigilContract.on(SigilMinted, this.handleSigilMinted);
+  }
+
+  public unsubscribeEvents(): void {
+    // todo
   }
 
   private setInitializingContracts(): void {
@@ -131,5 +143,16 @@ export class ContractsService {
       ContractsService.getContractAbi(contractName),
       this.createProvider()
     );
+  }
+
+  public async getTrustSigilContract() {
+    const TrustSigilContract = await this.getContractFor(
+      ContractNames.TrustSigil
+    );
+    return TrustSigilContract as TrustSigil;
+  }
+
+  private handleSigilMinted(...args) {
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: ContractsService.ts ~ line 147 ~ args', args)
   }
 }

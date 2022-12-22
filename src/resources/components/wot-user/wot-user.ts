@@ -1,9 +1,9 @@
 import { autoinject, bindable } from "aurelia-framework";
 import { Router } from "aurelia-router";
-import { USER_FIRST } from "shared/constants";
 import { Address, DID } from "types";
 import makeBlockie from "ethereum-blockies-base64";
 import useDidToAddress from "modules/did";
+import { USER_FIRST } from "shared/fixtures";
 
 @autoinject
 export class WotUser {

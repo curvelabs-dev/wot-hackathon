@@ -4,6 +4,7 @@ import { publicKey } from "../../env.json";
 import { autoinject } from "aurelia-framework";
 import { DID, ILitActionSignatureResponse } from "types";
 import useDidToAddress from "modules/did";
+import { _DevService } from "./_DevService";
 
 @autoinject
 export class LitActionsService {
@@ -11,9 +12,13 @@ export class LitActionsService {
 
   private litNodeClient;
 
-  constructor(private orbisService: OrbisService) {}
+  constructor(
+    private orbisService: OrbisService,
+    private _DevService = _DevService
+  ) {}
 
   public async connect() {
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 17 ~ connect')
     const LitJsSdk = await import("lit-js-sdk");
     // @ts-ignore
     const litNodeClient = new LitJsSdk.LitNodeClient({
@@ -38,6 +43,13 @@ export class LitActionsService {
    * Checkout OrbisService#rawIsFollowing for the `code` part or for testing
    */
   public async isFollowing_rawOrbisApi(didFollowing: DID, didFollowed: DID) {
+    if (!this._DevService.runConnected) {
+      return {
+        isFollowing: true,
+        signatures: [], // not needed when disconnected
+      };
+    }
+
     const url = `${this.orbisService.baseUrl}/orbis_v_followers?select=*&did_following=eq.${didFollowing}&did_followed=eq.${didFollowed}&active=eq.true`;
     const addressFollowing = useDidToAddress(didFollowing);
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 43 ~ addressFollowing', addressFollowing)

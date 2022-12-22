@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Orbis } from "@orbisclub/orbis-sdk";
 import { singleton } from "aurelia-framework";
-import { USER_FIRST } from "shared/constants";
+import { CONNECTED_USER } from "shared/fixtures";
 import { ORBIS_GROUP_MEMBERS } from "shared/fixtures";
 import { DID, GroupMemberStream, OrbisUser } from "types";
 
@@ -17,6 +17,14 @@ class MockOrbis {
     // @ts-ignore
     supabaseKey: ENV.supabaseKey,
   };
+
+  isConnected() {
+    return {
+      status: 200,
+      details: CONNECTED_USER,
+      did: CONNECTED_USER.did,
+    };
+  }
 
   getIsFollowing(a, b) {
     return { data: false, error: undefined };
@@ -40,17 +48,17 @@ class MockOrbis {
 
 @singleton(false)
 export class OrbisService {
-  // public orbis = new MockOrbis();
-  public orbis: IOrbis = new Orbis();
+  public orbis: IOrbis;
   public initiated = false;
   // @ts-ignore
-  public connectedUser: OrbisUser = { did: USER_FIRST.did };
+  public connectedUser: OrbisUser;
   public groupMembers: GroupMemberStream[];
   public baseUrl: string;
   public apiKey: string;
 
-  constructor() {
-    _DevService.OrbisService = this;
+  constructor(private _DevService = _DevService) {
+    this._DevService.OrbisService = this;
+    this.orbis = this._DevService.runConnected ? new Orbis() : new MockOrbis();
 
     // @ts-ignore
     this.baseUrl = this.orbis.api.restUrl;
@@ -92,6 +100,10 @@ export class OrbisService {
    * @param didFollowed Did of the user being followed
    */
   public async isFollowing(didFollowing: DID, didFollowed: DID) {
+    if (!this._DevService.runConnected) {
+      return true;
+    }
+
     const { data, error } = await this.orbis.getIsFollowing(
       didFollowing,
       didFollowed
@@ -158,6 +170,6 @@ async function checkUserIsConnected(orbis) {
 
   /** If SDK returns user details we save it in state */
   if (res && res.status == 200) {
-    return res.details;
+    return res.details ?? res.did;
   }
 }

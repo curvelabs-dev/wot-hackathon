@@ -46,7 +46,7 @@ export class WalletService {
   public readOnlyProvider: ethers.providers.BaseProvider;
   public defaultAccount: any;
   public defaultAccountAddress: Address;
-  public defaultAccountAddressDid: DID;
+  public defaultAccountDid: DID;
   public walletProvider: any;
   web3Modal: any;
   web3ModalProvider: any;
@@ -114,7 +114,7 @@ export class WalletService {
         );
         this.defaultAccountAddress = await this.getDefaultAccountAddress();
         /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: WalletService.ts ~ line 110 ~ this.defaultAccountAddress', this.defaultAccountAddress)
-        this.defaultAccountAddressDid = convertToDid(this.defaultAccountAddress)
+        this.defaultAccountDid = convertToDid(this.defaultAccountAddress)
       }
     } catch (error) {
       console.log(

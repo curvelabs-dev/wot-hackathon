@@ -3,14 +3,16 @@ import { Router, RouterConfiguration } from "aurelia-router";
 import LitConnectModal from "lit-connect-modal";
 import WalletConnectProvider from "@walletconnect/ethereum-provider";
 
-import { ContractNames, ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
+import {
+  ContractNames,
+  ContractsDeploymentProvider,
+} from "services/ContractsDeploymentProvider";
 import { OrbisService } from "services/OrbisService";
 import { WalletService } from "services/WalletService";
 import { _DevService } from "services/_DevService";
 import { LitActionsService } from "services/LitActionsService";
 import "./types";
 import { myExpect } from "modules/expect";
-import { USER_SECOND } from "shared/constants";
 
 import "./styles/globals.css";
 import "./styles/utilities.css";
@@ -24,7 +26,6 @@ import { ContractsService } from "services/ContractsService";
 export class App {
   public message = "Hello World!";
   private connectionStatus: boolean;
-  private _DevService = _DevService;
 
   constructor(
     private orbisService: OrbisService,
@@ -32,7 +33,8 @@ export class App {
     private contractsDeploymentProvider: ContractsDeploymentProvider,
     private contractsService: ContractsService,
     private router: Router,
-    private walletService: WalletService
+    private walletService: WalletService,
+    private _DevService: _DevService
   ) {
     document.addEventListener(
       "lit-ready",
@@ -59,13 +61,25 @@ export class App {
   async attached(): Promise<void> {
     // this.litModalInit();
 
-    await ContractsDeploymentProvider.initAll()
+    // First - Needs to happen before all others
+    await ContractsDeploymentProvider.initAll();
     await this.walletService.connect();
-    await this.contractsService.initializeContracts()
 
+    // Second
+    await this.contractsService.initializeContracts();
+    await this.contractsService.listenToEvents();
     await this.orbisService.initOrbisData(this.walletService.readOnlyProvider);
-    await this.litActionsService.connect();
 
+    // Third - Run disconnected if wanted
+    if (this._DevService.runConnected) {
+      await this.litActionsService.connect();
+    }
+
+    // Fourth - DEV
+    this.connectionStatus = !!this.walletService.defaultAccountAddress;
+    if (!this._DevService.isProduction) {
+      this._DevService.setupSigils();
+    }
 
     // await this.litActionsService.isFollowing_rawOrbisApi(litActionCode);
 
@@ -103,10 +117,25 @@ export class App {
   }
 
   private checkReadyForLaunch() {
-    myExpect(!!this.connectionStatus, "1. Not connect. Press connect button.");
     myExpect(
-      !!this._DevService.isOrbisActive,
-      "2. Orbis not active, In OrbisService, activate orbis by `new Orbis()`"
+      !!this.connectionStatus,
+      "1. Not connected to Wallet. Press connect button."
+    );
+    myExpect(
+      !!this._DevService.runConnected,
+      "2. _DevService.runConnected should be true"
+    );
+    myExpect(
+      this._DevService.isProduction,
+      "2. _DevService.isProduction should be true"
+    );
+    myExpect(!!this.orbisService.connectedUser.did, "3. Should have Orbis Did");
+    const orbisAndWalletSame =
+      this.walletService.defaultAccountDid.toLowerCase() ===
+      this.orbisService.connectedUser.did.toLowerCase();
+    myExpect(
+      orbisAndWalletSame,
+      `4. Wallet and Orbis should be same. Was\n Wallet: ${this.walletService.defaultAccountDid} \n Orbis: ${this.orbisService.connectedUser.did}`
     );
   }
 

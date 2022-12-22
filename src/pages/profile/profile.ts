@@ -16,7 +16,7 @@ export class Profile {
 
   @computedFrom("did", "orbisService.connectedUser.did")
   get isSameUser() {
-    const isSame = this.orbisService.connectedUser.did === this.did;
+    const isSame = this.orbisService.connectedUser?.did === this.did;
     return isSame;
   }
 
@@ -27,14 +27,19 @@ export class Profile {
   ) {}
 
   async activate(params: { did: DID }): Promise<void> {
-    this.did = params.did;
+    // Hack to wait for app.ts#attached to finish
+    window.setTimeout(async () => {
+      this.did = params.did;
 
-    this.isFollowing = await this.orbisService.isFollowing(
-      // this.isFollowing = await this.orbisService.rawIsFollowing(
-      this.orbisService.connectedUser.did,
-      this.did
-    );
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 26 ~ this.isFollowing', this.isFollowing)
+      this.orbisService.initiated;
+
+      this.isFollowing = await this.orbisService.isFollowing(
+        // this.isFollowing = await this.orbisService.rawIsFollowing(
+        this.orbisService.connectedUser.did,
+        this.did
+      );
+      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 26 ~ this.isFollowing', this.isFollowing)
+    }, 500);
   }
 
   private determineActivationStrategy() {

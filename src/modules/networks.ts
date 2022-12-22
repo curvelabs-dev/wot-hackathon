@@ -1,4 +1,8 @@
-import { AllowedNetworks, Networks, WalletService } from "services/WalletService";
+import {
+  AllowedNetworks,
+  Networks,
+  WalletService,
+} from "services/WalletService";
 
 export function isLocalhostUrl(): boolean {
   const is = window.location.host === "localhost:8080";
