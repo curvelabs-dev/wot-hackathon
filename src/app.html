@@ -23,7 +23,11 @@
       <div class="navbarContainer">
         <button click.delegate="router.navigate('/')">Home</button>
         <button click.delegate="router.navigate('/group')">Group</button>
-        <button click.delegate="router.navigate('/profile/did:pkh:eip155:1:0xb86fa0cfeea21558df988ad0ae22f92a8ef69ac1')">Profile</button>
+        <button
+          click.delegate="router.navigate('/profile/did:pkh:eip155:1:0xb86fa0cfeea21558df988ad0ae22f92a8ef69ac1')"
+        >
+          Profile
+        </button>
         <button click.delegate="router.navigate('/events')">Events</button>
         <button click.delegate="router.navigate('/playground')">
           Playground
@@ -41,12 +45,18 @@
       <div class="right-side">
         <div class="top-right hide-tablet">
           <div class="relative flex-row v-align-items-center">
-            <wot-user></wot-user>
+            <wot-user
+              if.bind="walletService.defaultAccountAddressDid"
+              did.bind="walletService.defaultAccountAddressDid"
+            ></wot-user>
           </div>
         </div>
         <h3>MEMBERS</h3>
         <div class="mbottom-15">
-          <wot-user repeat.for="member of orbisService.groupMembers" did.bind="member.did || member.profile_details.did"></wot-user>
+          <wot-user
+            repeat.for="member of orbisService.groupMembers"
+            did.bind="member.did || member.profile_details.did"
+          ></wot-user>
         </div>
       </div>
     </div>

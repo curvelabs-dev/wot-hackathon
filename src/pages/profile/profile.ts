@@ -1,7 +1,11 @@
 import { autoinject, computedFrom } from "aurelia-framework";
 import { activationStrategy } from "aurelia-router";
+import useDidToAddress from "modules/did";
+import { ContractNames } from "services/ContractsDeploymentProvider";
+import { ContractsService } from "services/ContractsService";
 import { LitActionsService } from "services/LitActionsService";
 import { OrbisService } from "services/OrbisService";
+import { TOKEN_ID } from "shared/constants";
 import { DID } from "types";
 
 @autoinject
@@ -18,14 +22,15 @@ export class Profile {
 
   constructor(
     private orbisService: OrbisService,
-    private litActionsService: LitActionsService
+    private litActionsService: LitActionsService,
+    private contractsService: ContractsService
   ) {}
 
   async activate(params: { did: DID }): Promise<void> {
     this.did = params.did;
 
     this.isFollowing = await this.orbisService.isFollowing(
-    // this.isFollowing = await this.orbisService.rawIsFollowing(
+      // this.isFollowing = await this.orbisService.rawIsFollowing(
       this.orbisService.connectedUser.did,
       this.did
     );
@@ -61,9 +66,23 @@ export class Profile {
   }
 
   private async trust() {
-    this.isTrusting = await this.litActionsService.isFollowing_rawOrbisApi(
+    const response = await this.litActionsService.isFollowing_rawOrbisApi(
       this.orbisService.connectedUser.did,
       this.did
     );
+
+    this.isTrusting = response.isFollowing;
+
+    const TrustSigilContract = await this.contractsService.getContractFor(
+      ContractNames.TrustSigil
+    );
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: app.ts ~ line 68 ~ contract', TrustSigilContract)
+    const receipientAddress = useDidToAddress(this.did);
+    const txResponse = await TrustSigilContract.mintSigil(
+      receipientAddress,
+      TOKEN_ID,
+      response.signatures
+    );
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 80 ~ txResponse', txResponse)
   }
 }

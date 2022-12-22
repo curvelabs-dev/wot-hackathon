@@ -3,6 +3,7 @@ import { Router, RouterConfiguration } from "aurelia-router";
 import LitConnectModal from "lit-connect-modal";
 import WalletConnectProvider from "@walletconnect/ethereum-provider";
 
+import { ContractNames, ContractsDeploymentProvider } from "services/ContractsDeploymentProvider";
 import { OrbisService } from "services/OrbisService";
 import { WalletService } from "services/WalletService";
 import { _DevService } from "services/_DevService";
@@ -17,6 +18,7 @@ import "./styles/responsive.css";
 import "./styles/Home.css";
 import "./app.scss";
 import { publicKey } from "../env.json";
+import { ContractsService } from "services/ContractsService";
 
 @autoinject
 export class App {
@@ -27,6 +29,8 @@ export class App {
   constructor(
     private orbisService: OrbisService,
     private litActionsService: LitActionsService,
+    private contractsDeploymentProvider: ContractsDeploymentProvider,
+    private contractsService: ContractsService,
     private router: Router,
     private walletService: WalletService
   ) {
@@ -55,10 +59,13 @@ export class App {
   async attached(): Promise<void> {
     // this.litModalInit();
 
+    await ContractsDeploymentProvider.initAll()
     await this.walletService.connect();
-    await this.orbisService.initOrbisData();
+    await this.contractsService.initializeContracts()
 
-    // await this.litActionsService.connect();
+    await this.orbisService.initOrbisData(this.walletService.readOnlyProvider);
+    await this.litActionsService.connect();
+
 
     // await this.litActionsService.isFollowing_rawOrbisApi(litActionCode);
 

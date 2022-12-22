@@ -3,6 +3,7 @@ import { OrbisService } from "./OrbisService";
 import { publicKey } from "../../env.json";
 import { autoinject } from "aurelia-framework";
 import { DID, ILitActionSignatureResponse } from "types";
+import useDidToAddress from "modules/did";
 
 @autoinject
 export class LitActionsService {
@@ -38,9 +39,25 @@ export class LitActionsService {
    */
   public async isFollowing_rawOrbisApi(didFollowing: DID, didFollowed: DID) {
     const url = `${this.orbisService.baseUrl}/orbis_v_followers?select=*&did_following=eq.${didFollowing}&did_followed=eq.${didFollowed}&active=eq.true`;
+    const addressFollowing = useDidToAddress(didFollowing);
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 43 ~ addressFollowing', addressFollowing)
+    const addressFollowed = useDidToAddress(didFollowed);
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 45 ~ addressFollowed', addressFollowed)
 
+    // Lit.Actions.setResponse({ response: JSON.stringify(response) });
     const code = `
       const go = async () => {
+        const utils = ethers.utils;
+
+        let messageHash = utils.solidityKeccak256(
+          ["address", "address"],
+          ["${addressFollowing}", "${addressFollowed}"],
+        );
+
+        // STEP 2: 32 bytes of data in Uint8Array
+        let messageHashBinary = utils.arrayify(messageHash)
+        /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 54 ~ messageHashBinary', messageHashBinary)
+
         const rawResponse = await fetch("${url}", {
           headers: {
             apikey: "${this.orbisService.apiKey}",
@@ -52,12 +69,11 @@ export class LitActionsService {
           return false;
         }
 
-        // Lit.Actions.setResponse({ response: JSON.stringify(response) });
         const isFollowing = response[0].active === "true";
 
         // all the params (toSign, publicKey, sigName) are passed in from the LitJsSdk.executeJs() function
         const sigShare = await LitActions.signEcdsa({
-          toSign: response,
+          toSign: messageHashBinary,
           publicKey,
           sigName
         });
@@ -75,8 +91,13 @@ export class LitActionsService {
       },
     })) as ILitActionSignatureResponse;
 
-    const isFollowing = Object.keys(signatures.signatures).length > 0
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 85 ~ signatures', signatures)
 
-    return isFollowing;
+    const isFollowing = Object.keys(signatures.signatures).length > 0;
+
+    return {
+      isFollowing,
+      signatures: signatures.signatures.sig1.signature,
+    };
   }
 }

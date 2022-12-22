@@ -3,6 +3,7 @@ import { Router } from "aurelia-router";
 import { USER_FIRST } from "shared/constants";
 import { Address, DID } from "types";
 import makeBlockie from "ethereum-blockies-base64";
+import useDidToAddress from "modules/did";
 
 @autoinject
 export class WotUser {
@@ -28,16 +29,4 @@ export class WotUser {
       addressLength
     )}`;
   }
-}
-
-import { getAddressFromDid } from "@orbisclub/orbis-sdk/utils";
-
-/** Turns a did:pkh into a clean address and chain object */
-export default function useDidToAddress(did: string) {
-  if (did.includes("did:pkh")) {
-    const res = getAddressFromDid(did);
-    return res.address;
-  }
-
-  return did;
 }

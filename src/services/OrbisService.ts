@@ -34,14 +34,14 @@ class MockOrbis {
     return {
       data: ORBIS_GROUP_MEMBERS,
       error: undefined,
-    }
+    };
   }
 }
 
 @singleton(false)
 export class OrbisService {
-  public orbis = new MockOrbis();
-  // public orbis: IOrbis = new Orbis();
+  // public orbis = new MockOrbis();
+  public orbis: IOrbis = new Orbis();
   public initiated = false;
   // @ts-ignore
   public connectedUser: OrbisUser = { did: USER_FIRST.did };
@@ -58,8 +58,9 @@ export class OrbisService {
     this.apiKey = this.orbis.api.supabaseKey;
   }
 
-  async initOrbisData() {
-    // this.connectedUser = await this.loadOrbisUser();
+  async initOrbisData(provider) {
+    // @ts-ignore
+    this.connectedUser = await this.loadOrbisUser();
     // await this.loadOrbisGroup();
     this.groupMembers = await this.loadOrbisGroupMember();
 
@@ -148,6 +149,12 @@ export class OrbisService {
 
 async function checkUserIsConnected(orbis) {
   const res = await orbis?.isConnected();
+  /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 151 ~ res', res)
+
+  if (res === false) {
+    const temp = await this.orbis.connect();
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 156 ~ temp', temp)
+  }
 
   /** If SDK returns user details we save it in state */
   if (res && res.status == 200) {

@@ -11,3 +11,5 @@ export const USER_SECOND = {
   address: SECOND_ADDRESS,
   did: "did:pkh:eip155:1:0xe834627cde2dc8f55fe4a26741d3e91527a8a498"
 }
+
+export const TOKEN_ID = 1
