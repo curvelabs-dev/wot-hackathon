@@ -56,7 +56,7 @@ export class OrbisService {
   public baseUrl: string;
   public apiKey: string;
 
-  constructor(private _DevService = _DevService) {
+  constructor(private _DevService: _DevService) {
     this._DevService.OrbisService = this;
     this.orbis = this._DevService.runConnected ? new Orbis() : new MockOrbis();
 

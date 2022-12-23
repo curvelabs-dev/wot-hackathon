@@ -1,5 +1,7 @@
+@import "./styles/shared.scss";
+
 * {
-  border: 1px solid black;
+  // border: 1px solid black;
 }
 
 .devStatusContainer {
@@ -8,6 +10,31 @@
   section {
     margin: 0 5px;
   }
+}
+
+.homeInformation {
+  margin-bottom: 20px;
+
+  .homeInformation__logo {
+    width: 82px;
+    height: 82px;
+  }
+
+  @include navGroup();
+  // .navGroup {
+  //   display: flex;
+  //   margin-bottom: 12px;
+
+  //   .navIcon {
+  //     width: $homeInformationNavItemHeight;
+  //     height: $homeInformationNavItemHeight;
+  //     margin-right: 14px;
+  //   }
+
+  //   .navText {
+  //     height: $homeInformationNavItemHeight;
+  //   }
+  // }
 }
 
 .main-container {

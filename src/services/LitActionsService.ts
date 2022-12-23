@@ -5,6 +5,16 @@ import { autoinject } from "aurelia-framework";
 import { DID, ILitActionSignatureResponse } from "types";
 import useDidToAddress from "modules/did";
 import { _DevService } from "./_DevService";
+import {
+  arrayify,
+  computePublicKey,
+  joinSignature,
+  recoverAddress,
+  recoverPublicKey,
+  solidityKeccak256,
+  splitSignature,
+  verifyMessage,
+} from "ethers/lib/utils";
 
 @autoinject
 export class LitActionsService {
@@ -14,11 +24,10 @@ export class LitActionsService {
 
   constructor(
     private orbisService: OrbisService,
-    private _DevService = _DevService
+    private _DevService: _DevService
   ) {}
 
   public async connect() {
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 17 ~ connect')
     const LitJsSdk = await import("lit-js-sdk");
     // @ts-ignore
     const litNodeClient = new LitJsSdk.LitNodeClient({
@@ -26,14 +35,13 @@ export class LitActionsService {
     });
     this.litNodeClient = litNodeClient;
     const connected = await litNodeClient.connect();
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 30 ~ connected', connected)
 
     // you need an AuthSig to auth with the nodes
     // this will get it from metamask or any browser wallet
     // @ts-ignore
     this.authSig = await LitJsSdk.checkAndSignAuthMessage({
       // chain: 'ethereum'
-      chain: "goerli",
+      chain: "goerli", // TODO take from WalletSevice
     });
 
     return connected;
@@ -57,18 +65,18 @@ export class LitActionsService {
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 45 ~ addressFollowed', addressFollowed)
 
     // Lit.Actions.setResponse({ response: JSON.stringify(response) });
+
+    const messageHash = solidityKeccak256(
+      ["address", "address"],
+      [addressFollowing, addressFollowed]
+    );
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 73 ~ messageHash', messageHash)
+
+    // STEP 2: 32 bytes of data in Uint8Array
+    const messageHashBinary = arrayify(messageHash);
     const code = `
       const go = async () => {
         const utils = ethers.utils;
-
-        let messageHash = utils.solidityKeccak256(
-          ["address", "address"],
-          ["${addressFollowing}", "${addressFollowed}"],
-        );
-
-        // STEP 2: 32 bytes of data in Uint8Array
-        let messageHashBinary = utils.arrayify(messageHash)
-        /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 54 ~ messageHashBinary', messageHashBinary)
 
         const rawResponse = await fetch("${url}", {
           headers: {
@@ -84,8 +92,11 @@ export class LitActionsService {
         const isFollowing = response[0].active === "true";
 
         // all the params (toSign, publicKey, sigName) are passed in from the LitJsSdk.executeJs() function
-        const sigShare = await LitActions.signEcdsa({
-          toSign: messageHashBinary,
+        /* prettier-ignore */ console.log('------------------------------------------------------------------------------------------')
+        console.log("ethPersonalSignMessageEcdsa")
+        /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 54 ~ messageHashBinary', messageHashBinary)
+        const sigShare = await LitActions.ethPersonalSignMessageEcdsa({
+          message: messageHashBinary,
           publicKey,
           sigName
         });
@@ -98,6 +109,7 @@ export class LitActionsService {
       authSig: this.authSig,
       // all jsParams can be used anywhere in your litActionCode
       jsParams: {
+        messageHashBinary,
         publicKey: publicKey,
         sigName: "sig1",
       },
@@ -107,9 +119,40 @@ export class LitActionsService {
 
     const isFollowing = Object.keys(signatures.signatures).length > 0;
 
+    stuff(signatures.signatures, messageHashBinary);
+
     return {
       isFollowing,
       signatures: signatures.signatures.sig1.signature,
     };
   }
+}
+function stuff(signatures, message) {
+  const sig = signatures.sig1;
+  const dataSigned = sig.dataSigned;
+  const encodedSig = joinSignature({
+    r: "0x" + sig.r,
+    s: "0x" + sig.s,
+    v: sig.recid,
+  });
+
+  console.log("encodedSig", encodedSig);
+  console.log("sig length in bytes: ", encodedSig.substring(2).length / 2);
+  // 0xb85e49d6aaffc46eeea998a7c48ae15b33d0a4881b15f0f9d0c22d308a54ed1b
+  console.log("1 dataSigned", dataSigned);
+  console.log("2 arrayify(dataSigned)", arrayify(dataSigned));
+  const splitSig = splitSignature(encodedSig);
+  console.log("splitSig", splitSig);
+
+  // return;
+
+  const recoveredPubkey = recoverPublicKey(arrayify(dataSigned), encodedSig);
+  console.log("uncompressed recoveredPubkey", recoveredPubkey);
+  const compressedRecoveredPubkey = computePublicKey(recoveredPubkey, true);
+  console.log("compressed recoveredPubkey", compressedRecoveredPubkey);
+  const recoveredAddress = recoverAddress(dataSigned, encodedSig);
+  console.log("recoveredAddress", recoveredAddress);
+
+  const recoveredAddressViaMessage = verifyMessage(message, encodedSig);
+  console.log("recoveredAddressViaMessage", recoveredAddressViaMessage);
 }

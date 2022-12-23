@@ -8,8 +8,9 @@ import {
 import { BaseProvider, JsonRpcProvider } from "@ethersproject/providers";
 import { WalletService } from "./WalletService";
 import { isLocalhostNetwork } from "modules/networks";
-import { Address } from "types";
+import { Address, IStandardEvent } from "types";
 import { TrustSigil } from "contracts/types";
+import { EthereumService } from "./EthereumService";
 
 @autoinject
 export class ContractsService {
@@ -24,12 +25,20 @@ export class ContractsService {
 
   constructor(
     private eventAggregator: EventAggregator,
+    private ethereumService: EthereumService,
     private walletService: WalletService
   ) {
     ContractsService.Contracts.delete(ContractNames.BadgerCore);
   }
 
   public async listenToEvents(): Promise<void> {
+    const TrustSigilContract = await this.getTrustSigilContract();
+
+    const SigilMinted = TrustSigilContract.filters.SigilMinted();
+    TrustSigilContract.on(SigilMinted, this.handleSigilMinted);
+  }
+
+  public async getAllEventsFrom(contract): Promise<void> {
     const TrustSigilContract = await this.getTrustSigilContract();
 
     const SigilMinted = TrustSigilContract.filters.SigilMinted();
@@ -150,6 +159,46 @@ export class ContractsService {
       ContractNames.TrustSigil
     );
     return TrustSigilContract as TrustSigil;
+  }
+
+  /**
+   * fetch Events in small blocks to avoid "block range is too wide" error from the provider
+   */
+  public async filterEventsInBlocks<TEventArgs>(
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    contract: any,
+    filter: unknown,
+    startingBlockNumber: number,
+    handler: (event: Array<IStandardEvent<TEventArgs>>) => void
+  ): Promise<void> {
+    const lastBlock = await this.ethereumService.getLastBlock();
+    if (lastBlock === null) {
+      console.log("Could not filter events", "No Blocks found");
+      return;
+    }
+
+    const lastEthBlockNumber = lastBlock.number;
+    const blocksToFetch = lastEthBlockNumber - startingBlockNumber;
+    let startingBlock = startingBlockNumber;
+
+    /**
+     * fetch in small blocks to avoid "block range is too wide" error from the provider
+     */
+    const blocksize = blocksToFetch;
+    let fetched = 0;
+
+    do {
+      const endBlock = startingBlock + blocksize + 1;
+      await contract
+        .queryFilter(filter, startingBlock, endBlock)
+        .then((events: Array<IStandardEvent<TEventArgs>>): void => {
+          if (events?.length) {
+            handler(events);
+          }
+        });
+      fetched += blocksize;
+      startingBlock += blocksize;
+    } while (fetched < blocksToFetch);
   }
 
   private handleSigilMinted(...args) {

@@ -5,6 +5,8 @@ import makeBlockie from "ethereum-blockies-base64";
 import useDidToAddress from "modules/did";
 import { USER_FIRST } from "shared/fixtures";
 
+import "./wot-user.scss"
+
 @autoinject
 export class WotUser {
   @bindable pfp: string;

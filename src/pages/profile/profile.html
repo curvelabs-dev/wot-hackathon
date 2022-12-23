@@ -1,7 +1,7 @@
 <template>
   <div class="navigation-level-2-container">
     <div class="navigation-level-2">
-      <div class="item-group-label">PROFILE</div>
+      <div class="item-group-label">User Profile</div>
       <div class="group-menu">
         <div class="profile-details">
           <wot-user if.bind="did" did.bind="did"></wot-user>
@@ -57,6 +57,77 @@
                 class="mright-5"
                 height="15"
               /><span>Trusting</span>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="profileContainer">
+            <h4>Profile</h4>
+
+            <div class="navGroup">
+              <img
+                class="navIcon"
+                src="/static/img/figma-icons/view-sigil.png"
+                height="35"
+              />
+              <div class="navText">
+                <a
+                  click.delegate="router.navigate('/')"
+                  href="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >View Sigils</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+
+          <!-- Sigils -->
+          <div>Sigils: ${hasSigil || 0}</div>
+          <div if.bind="hasSigil" class="sigilsContainer">
+            <img src="/static/sigils/sigil_1.png" height="35" />
+          </div>
+
+          <hr>
+
+          <!-- Activities -->
+          <div class="profileContainer">
+            <h4>Activities</h4>
+
+            <div class="navGroup">
+              <img
+                class="navIcon"
+                src="/static/img/figma-icons/view-sigil.png"
+                height="35"
+              />
+              <div class="navText">
+                <a
+                  click.delegate="router.navigate('/')"
+                  href="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >View Events</a
+                >
+              </div>
+            </div>
+            <div class="navGroup">
+              <img
+                class="navIcon"
+                src="/static/img/figma-icons/view-sigil.png"
+                height="35"
+              />
+              <div class="navText">
+                <a
+                  click.delegate="router.navigate('/')"
+                  href="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >View Groups</a
+                >
+              </div>
             </div>
           </div>
         </div>

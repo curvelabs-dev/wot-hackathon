@@ -1,4 +1,6 @@
 <template>
+  <require from="./pages/profile/profile"></require>
+
   <!-- devStatusContainer -->
   <div class="devStatusContainer">
     <section>Connected: ${!!_DevService.runConnected}</section>
@@ -21,17 +23,102 @@
     <!-- left -->
     <div class="navigation-container">
       <div class="navbarContainer">
-        <button click.delegate="router.navigate('/')">Home</button>
-        <button click.delegate="router.navigate('/group')">Group</button>
-        <button
-          click.delegate="router.navigate('/profile/did:pkh:eip155:1:0xb86fa0cfeea21558df988ad0ae22f92a8ef69ac1')"
-        >
-          Profile
-        </button>
-        <button click.delegate="router.navigate('/events')">Events</button>
-        <button click.delegate="router.navigate('/playground')">
-          Playground
-        </button>
+        <!-- homeInformation -->
+        <div class="homeInformation navigation-level-2">
+          <img
+            class="homeInformation__logo"
+            src="/static/wot-curvelabs.png"
+            height="35"
+          />
+          <h4>WEB OF TRUST</h4>
+          <div class="navGroup">
+            <img
+              class="navIcon"
+              src="/static/img/icons/home-menu.png"
+              height="35"
+            />
+            <div class="navText">
+              <a
+                click.delegate="router.navigate('/')"
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Home</a
+              >
+            </div>
+          </div>
+
+          <div class="navGroup">
+            <img
+              class="navIcon"
+              src="/static/img/icons/messages-menu.png"
+              height="35"
+            />
+            <div class="navText">
+              <a
+                click.delegate="router.navigate('/group')"
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Group</a
+              >
+            </div>
+          </div>
+          <!-- <div class="navGroup">
+            <img
+              class="navIcon"
+              src="/static/img/icons/messages-menu.png"
+              height="35"
+            />
+            <div class="navText">
+              <a
+                click.delegate="router.navigate('/profile/did:pkh:eip155:1:0xb86fa0cfeea21558df988ad0ae22f92a8ef69ac1')"
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Profile</a
+              >
+            </div>
+          </div> -->
+          <div class="navGroup">
+            <img
+              class="navIcon"
+              src="/static/img/icons/messages-menu.png"
+              height="35"
+            />
+            <div class="navText">
+              <a
+                click.delegate="router.navigate('/events')"
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Events</a
+              >
+            </div>
+          </div>
+          <div class="navGroup">
+            <img
+              class="navIcon"
+              src="/static/img/icons/messages-menu.png"
+              height="35"
+            />
+            <div class="navText">
+              <a
+                click.delegate="router.navigate('/playground')"
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Playground</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- profile -->
+        <profile
+          if.bind="walletService.defaultAccountDid"
+          did.bind="walletService.defaultAccountDid"
+        ></profile>
       </div>
     </div>
 

@@ -78,7 +78,7 @@ export class App {
     // Fourth - DEV
     this.connectionStatus = !!this.walletService.defaultAccountAddress;
     if (!this._DevService.isProduction) {
-      this._DevService.setupSigils();
+      // this._DevService.setupSigils();
     }
 
     // await this.litActionsService.isFollowing_rawOrbisApi(litActionCode);
