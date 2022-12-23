@@ -7,7 +7,7 @@
     <!-- address -->
     <div class="user-details-container">
       <div class="name">
-        <a click.delegate="router.navigate(`/profile/${did}`)" href="${`/profile/${did}`}">${shortenedAddress}</a>
+        <a click.delegate="publishSelectedUser()">${shortenedAddress}</a>
       </div>
       <div class="badge black">${shortenedAddress}</div>
     </div>

@@ -1,7 +1,7 @@
 @import "./variables.scss";
 
-@mixin navGroup() {
-  .navGroup {
+@mixin navItem() {
+  .navItem {
     display: flex;
     margin-bottom: 12px;
 

@@ -1,3 +1,4 @@
+import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { autoinject, PLATFORM } from "aurelia-framework";
 import { Router, RouterConfiguration } from "aurelia-router";
 import LitConnectModal from "lit-connect-modal";
@@ -21,17 +22,23 @@ import "./styles/Home.css";
 import "./app.scss";
 import { publicKey } from "../env.json";
 import { ContractsService } from "services/ContractsService";
+import { UserChangedEvent } from "resources/components/wot-user/wot-user";
+import { DID } from "./types";
 
 @autoinject
 export class App {
   public message = "Hello World!";
   private connectionStatus: boolean;
+  private selectedUserDid: DID;
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private orbisService: OrbisService,
     private litActionsService: LitActionsService,
     private contractsDeploymentProvider: ContractsDeploymentProvider,
     private contractsService: ContractsService,
+    private eventAggregator: EventAggregator,
+
     private router: Router,
     private walletService: WalletService,
     private _DevService: _DevService
@@ -69,6 +76,8 @@ export class App {
     await this.contractsService.initializeContracts();
     await this.contractsService.listenToEvents();
     await this.orbisService.initOrbisData(this.walletService.readOnlyProvider);
+    this.subscribeEvents();
+    this.initVars();
 
     // Third - Run disconnected if wanted
     if (this._DevService.runConnected) {
@@ -84,6 +93,24 @@ export class App {
     // await this.litActionsService.isFollowing_rawOrbisApi(litActionCode);
 
     // const res = await this.orbisService.followUser(USER_SECOND.did)
+  }
+
+  detached() {
+    this.subscriptions.forEach((sub) => sub.dispose());
+  }
+
+  private initVars() {
+    this.selectedUserDid = this.walletService.defaultAccountDid;
+  }
+
+  private subscribeEvents() {
+    this.subscriptions.push(
+      this.eventAggregator.subscribe(UserChangedEvent, (changedDid: DID) => {
+        /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: app.ts ~ line 109 ~ changedDid', changedDid)
+        this.selectedUserDid = changedDid;
+        /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: app.ts ~ line 111 ~ this.selectedUserDid', this.selectedUserDid)
+      })
+    );
   }
 
   async litModalInit() {
@@ -144,41 +171,70 @@ export class App {
     config.options.pushState = true;
     config.options.root = "/";
 
+    config.useViewPortDefaults({
+      profileRouterView: {
+        moduleId: PLATFORM.moduleName("./pages/profile/profile"),
+      },
+    });
+
     config.map([
       {
-        moduleId: PLATFORM.moduleName("./pages/home/home"),
         nav: true,
         name: "home",
         route: ["", "/", "home"],
         title: "Home",
+        viewPorts: {
+          default: {
+            moduleId: PLATFORM.moduleName("./pages/home/home"),
+          },
+        },
       },
       {
-        moduleId: PLATFORM.moduleName("./pages/group/group"),
         nav: true,
         name: "group",
         route: ["group"],
         title: "Group",
+        viewPorts: {
+          default: {
+            moduleId: PLATFORM.moduleName("./pages/group/group"),
+          },
+        },
       },
+      // {
+      //   nav: false,
+      //   name: "profile",
+      //   route: ["profile/:did"],
+      //   title: "Profile",
+      //   viewPorts: {
+      //     default: {
+      //       moduleId: null,
+      //     },
+      //     profileRouterView: {
+      //       moduleId: PLATFORM.moduleName("./pages/profile/profile"),
+      //     },
+      //   },
+      // },
       {
-        moduleId: PLATFORM.moduleName("./pages/profile/profile"),
-        nav: false,
-        name: "profile",
-        route: ["profile/:did"],
-        title: "Profile",
-      },
-      {
-        moduleId: PLATFORM.moduleName("./pages/events/events"),
         nav: true,
         name: "events",
         route: ["events"],
         title: "Events",
+        viewPorts: {
+          default: {
+            moduleId: PLATFORM.moduleName("./pages/events/events"),
+          },
+        },
       },
       {
-        moduleId: PLATFORM.moduleName("./pages/playground/playground"),
         nav: true,
         name: "playground",
         route: ["playground"],
         title: "Playground",
+        viewPorts: {
+          default: {
+            moduleId: PLATFORM.moduleName("./pages/playground/playground"),
+          },
+        },
       },
     ]);
 

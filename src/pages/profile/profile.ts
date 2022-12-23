@@ -10,11 +10,16 @@ import { WalletService } from "services/WalletService";
 import { TOKEN_ID } from "shared/constants";
 import { DID } from "types";
 
-import "./profile.scss"
+import "./profile.scss";
 
 @autoinject
 export class Profile {
   @bindable did: DID;
+
+  didChanged(newValue) {
+    this.resetVars()
+    this.attached();
+  }
 
   private isFollowing: boolean;
   private isTrusting: boolean;
@@ -116,5 +121,12 @@ export class Profile {
 
     this.hasSigil = !!txResponse;
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 80 ~ txResponse', txResponse)
+  }
+
+  private resetVars() {
+    this.isFollowing = false;
+    this.isTrusting = false;
+    this.hasSigil = false;
+    this.sigils = undefined;
   }
 }

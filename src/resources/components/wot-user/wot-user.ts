@@ -1,27 +1,35 @@
 import { autoinject, bindable } from "aurelia-framework";
+import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 import { Address, DID } from "types";
 import makeBlockie from "ethereum-blockies-base64";
 import useDidToAddress from "modules/did";
 import { USER_FIRST } from "shared/fixtures";
 
-import "./wot-user.scss"
+import "./wot-user.scss";
+
+export const UserChangedEvent = "user-changed";
 
 @autoinject
 export class WotUser {
   @bindable pfp: string;
-  @bindable did: DID = USER_FIRST.did;
+  @bindable did: DID;
   @bindable address: Address;
+
+  didChanged() {
+    this.attached();
+  }
 
   private finalPfp: string;
   private shortenedAddress: string;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private eventAggregator: EventAggregator
+  ) {}
 
   attached() {
-    if (!this.address) {
-      this.address = useDidToAddress(this.did);
-    }
+    this.address = useDidToAddress(this.did);
 
     this.finalPfp = this.pfp ?? makeBlockie(useDidToAddress(this.address));
 
@@ -30,5 +38,10 @@ export class WotUser {
       addressLength - 4,
       addressLength
     )}`;
+      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: wot-user.ts ~ line 43 ~ this.shortenedAddress', this.shortenedAddress)
+  }
+
+  private publishSelectedUser(): void {
+    this.eventAggregator.publish(UserChangedEvent, this.did);
   }
 }
