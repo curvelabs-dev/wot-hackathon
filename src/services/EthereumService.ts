@@ -1,6 +1,8 @@
+import { autoinject } from "aurelia-framework";
 import { IBlockInfo } from "types";
 import { WalletService } from "./WalletService";
 
+@autoinject
 export class EthereumService {
   private blockSubscribed = false;
 

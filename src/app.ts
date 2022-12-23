@@ -75,6 +75,7 @@ export class App {
     // Second
     await this.contractsService.initializeContracts();
     await this.contractsService.listenToEvents();
+    await this.contractsService.getAllEventsFromTrustSigil();
     await this.orbisService.initOrbisData(this.walletService.readOnlyProvider);
     this.subscribeEvents();
     this.initVars();

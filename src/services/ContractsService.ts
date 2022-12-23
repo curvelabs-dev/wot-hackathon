@@ -38,11 +38,12 @@ export class ContractsService {
     TrustSigilContract.on(SigilMinted, this.handleSigilMinted);
   }
 
-  public async getAllEventsFrom(contract): Promise<void> {
+  public async getAllEventsFromTrustSigil(): Promise<void> {
     const TrustSigilContract = await this.getTrustSigilContract();
-
     const SigilMinted = TrustSigilContract.filters.SigilMinted();
-    TrustSigilContract.on(SigilMinted, this.handleSigilMinted);
+    this.filterEventsInBlocks(TrustSigilContract, SigilMinted, 0, (events) => {
+      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: ContractsService.ts ~ line 45 ~ events', events)
+    })
   }
 
   public unsubscribeEvents(): void {
