@@ -76,13 +76,13 @@ export class App {
 
     // Second
     await this.contractsService.initializeContracts();
-    await this.contractsService.listenToEvents();
     await this.orbisService.initOrbisData(this.walletService.readOnlyProvider);
     this.subscribeEvents();
     this.initVars();
 
     // Second - After
     await this.trustSigilContractService.init();
+    await this.trustSigilContractService.listenToSigilMintedEvent();
 
     // Third - Run disconnected if wanted
     if (this._DevService.runConnected) {

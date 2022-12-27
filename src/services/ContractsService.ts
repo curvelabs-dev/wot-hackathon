@@ -32,13 +32,6 @@ export class ContractsService {
     ContractsService.Contracts.delete(ContractNames.BadgerCore);
   }
 
-  public async listenToEvents(): Promise<void> {
-    const TrustSigilContract = await this.getTrustSigilContract();
-
-    const SigilMinted = TrustSigilContract.filters.SigilMinted();
-    TrustSigilContract.on(SigilMinted, this.handleSigilMinted);
-  }
-
   public async getAllEventsFromTrustSigil(): Promise<SigilMintedEvent[]> {
     const TrustSigilContract = await this.getTrustSigilContract();
     const SigilMinted = TrustSigilContract.filters.SigilMinted();
@@ -208,9 +201,5 @@ export class ContractsService {
       fetched += blocksize;
       startingBlock += blocksize;
     } while (fetched < blocksToFetch);
-  }
-
-  private handleSigilMinted(...args) {
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: ContractsService.ts ~ line 147 ~ args', args)
   }
 }

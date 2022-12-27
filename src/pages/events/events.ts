@@ -1,4 +1,5 @@
 import { autoinject, computedFrom } from "aurelia-framework";
+import { Subscription } from "aurelia-event-aggregator";
 import { useDidToAddress } from "modules/did";
 import { TrustSigilContractService } from "services/contracts/TrustSigilContractService";
 import { ContractsService } from "services/ContractsService";
@@ -18,6 +19,7 @@ export class Events {
   private newEventAttendees: string;
   private numberOfTrustees = 0;
   private joinEventThreshold = 3;
+  private subscriptions: Subscription[] = [];
 
   @computedFrom("numberOfTrustees", "joinEventThreshold")
   private get disableJoinButton() {
@@ -35,7 +37,23 @@ export class Events {
   attached() {
     window.setTimeout(async () => {
       this.numberOfTrustees = await this.getNumberOfTrustees();
+      this.subscriptions.push(
+        this.trustSigilContractService.subscribeSigilMintedEvent(
+          async (sigilMintedEvent) => {
+            const wasAdded =
+              this.trustSigilContractService.maybeAddNewSigilMintEvent(
+                sigilMintedEvent
+              );
+            if (!wasAdded) return;
+            this.numberOfTrustees = await this.getNumberOfTrustees();
+          }
+        )
+      );
     }, 500);
+  }
+
+  detached() {
+    this.subscriptions.forEach((sub) => sub.dispose());
   }
 
   private async enableCreateEvent() {
@@ -61,7 +79,7 @@ export class Events {
     // const events = EVENTS;
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: events.ts ~ line 42 ~ events', events)
 
-    const connectedMemberAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+    const connectedMemberAddress = this.walletService.defaultAccountAddress;
 
     // 1. Get Group members
 
@@ -81,7 +99,6 @@ export class Events {
     // 3. Get trustees in group
     const followerIsInGroupCollector = [];
     groupMembers.forEach((member) => {
-      // /* prettier-ignore */ console.log('------------------------------------------------------------------------------------------')
       const address = useDidToAddress(member.profile_details.did);
       // address; /*?*/
       const target = connectedIsSenderEvents.find(

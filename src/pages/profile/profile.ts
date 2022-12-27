@@ -2,6 +2,7 @@ import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { activationStrategy } from "aurelia-router";
 import { BigNumber } from "ethers/lib/ethers";
 import { useDidToAddress } from "modules/did";
+import { TrustSigilContractService } from "services/contracts/TrustSigilContractService";
 import { ContractsService } from "services/ContractsService";
 import { LitActionsService } from "services/LitActionsService";
 import { OrbisService } from "services/OrbisService";
@@ -42,6 +43,7 @@ export class Profile {
     private orbisService: OrbisService,
     private litActionsService: LitActionsService,
     private contractsService: ContractsService,
+    private trustSigilContractService: TrustSigilContractService,
     private walletService: WalletService
   ) {}
 
