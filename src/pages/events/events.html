@@ -65,10 +65,21 @@
         <div class="eventCard">
           <section class="eventHeader">
             <h4>Event Name (TODO)</h4>
+
+            <div class="eventHeader__body">
+              <div class="eventCard__createdBy">
+                <div class="eventCard__createdTitle">Created by</div>
+                <wot-user did.bind="walletService.defaultAccountDid"></wot-user>
+              </div>
+              <div class="eventCard__createdAt">
+                <div class="eventCard__createdTitle">Created</div>
+                <div class="eventCard__createdAtTime">1 day ago</div>
+              </div>
+            </div>
           </section>
 
           <section class="eventCard__image">
-            <img src="/static/example-event-image.png" height="50"/>
+            <img src="/static/example-event-image.png" height="50" />
           </section>
 
           <section class="eventCard__description">

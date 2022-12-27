@@ -50,6 +50,17 @@
         margin: 10px 0;
       }
 
+      .eventHeader {
+        .eventHeader__body {
+          display: flex;
+          justify-content: space-between;
+
+          .eventCard__createdTitle {
+            margin-bottom: 5px;
+          }
+        }
+      }
+
       .eventCard__image {
         display: flex;
 
