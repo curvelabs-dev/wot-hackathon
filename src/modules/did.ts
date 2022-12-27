@@ -3,7 +3,7 @@ import { Networks, WalletService } from "services/WalletService";
 import { Address, DID } from "types";
 
 /** Turns a did:pkh into a clean address and chain object */
-export default function useDidToAddress(did: string) {
+export function useDidToAddress(did: string) {
   if (did.includes("did:pkh")) {
     const res = getAddressFromDid(did);
     return res.address;

@@ -3,7 +3,7 @@ import { EventAggregator } from "aurelia-event-aggregator";
 import { Router } from "aurelia-router";
 import { Address, DID } from "types";
 import makeBlockie from "ethereum-blockies-base64";
-import useDidToAddress from "modules/did";
+import { useDidToAddress } from "modules/did";
 import { USER_FIRST } from "shared/fixtures";
 
 import "./wot-user.scss";

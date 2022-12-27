@@ -1,7 +1,7 @@
 import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { activationStrategy } from "aurelia-router";
 import { BigNumber } from "ethers/lib/ethers";
-import useDidToAddress from "modules/did";
+import { useDidToAddress } from "modules/did";
 import { ContractNames } from "services/ContractsDeploymentProvider";
 import { ContractsService } from "services/ContractsService";
 import { LitActionsService } from "services/LitActionsService";

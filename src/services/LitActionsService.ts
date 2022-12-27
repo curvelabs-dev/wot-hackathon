@@ -3,7 +3,7 @@ import { OrbisService } from "./OrbisService";
 import { publicKey } from "../../env.json";
 import { autoinject } from "aurelia-framework";
 import { DID, ILitActionSignatureResponse } from "types";
-import useDidToAddress from "modules/did";
+import { useDidToAddress } from "modules/did";
 import { _DevService } from "./_DevService";
 import {
   arrayify,
