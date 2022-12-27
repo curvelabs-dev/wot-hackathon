@@ -20,10 +20,10 @@ import "./styles/utilities.css";
 import "./styles/responsive.css";
 import "./styles/Home.css";
 import "./app.scss";
-import { publicKey } from "../env.json";
 import { ContractsService } from "services/ContractsService";
 import { UserChangedEvent } from "resources/components/wot-user/wot-user";
 import { DID } from "./types";
+import { TrustSigilContractService } from "services/contracts/TrustSigilContractService";
 
 @autoinject
 export class App {
@@ -38,6 +38,7 @@ export class App {
     private litActionsService: LitActionsService,
     private contractsDeploymentProvider: ContractsDeploymentProvider,
     private contractsService: ContractsService,
+    private trustSigilContractService: TrustSigilContractService,
     private eventAggregator: EventAggregator,
 
     private router: Router,
@@ -79,6 +80,9 @@ export class App {
     await this.orbisService.initOrbisData(this.walletService.readOnlyProvider);
     this.subscribeEvents();
     this.initVars();
+
+    // Second - After
+    await this.trustSigilContractService.init();
 
     // Third - Run disconnected if wanted
     if (this._DevService.runConnected) {

@@ -2,7 +2,6 @@ import { autoinject, bindable, computedFrom } from "aurelia-framework";
 import { activationStrategy } from "aurelia-router";
 import { BigNumber } from "ethers/lib/ethers";
 import { useDidToAddress } from "modules/did";
-import { ContractNames } from "services/ContractsDeploymentProvider";
 import { ContractsService } from "services/ContractsService";
 import { LitActionsService } from "services/LitActionsService";
 import { OrbisService } from "services/OrbisService";
@@ -16,17 +15,20 @@ import "./profile.scss";
 export class Profile {
   @bindable did: DID;
 
-  didChanged(newValue) {
+  didChanged(newValue: string) {
+    // if (newValue.toLowerCase() === this.did.toLowerCase()) return
+    this.did = newValue;
     this.resetVars();
     this.attached();
-
-    this.did = newValue;
   }
 
   private isFollowing: boolean;
   private isTrusting: boolean;
+  /**
+   * Could also just use `isTrusting`, but I'm leaving it for now for flexibility (has risks of bugs though)
+   */
   private hasSigil = false;
-  private sigils: BigNumber;
+  private sigil: BigNumber;
 
   @computedFrom("did", "orbisService.connectedUser.did")
   get isSameUser() {
@@ -60,20 +62,21 @@ export class Profile {
 
       const getTrustSigilContract =
         await this.contractsService.getTrustSigilContract();
-      this.sigils = await getTrustSigilContract.getSigil(
+      this.sigil = await getTrustSigilContract.getSigil(
         TOKEN_ID,
         useDidToAddress(this.did),
         this.walletService.defaultAccountAddress
       );
-      // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 57 ~ this.sigils', this.sigils)
+      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 57 ~ this.sigils', this.sigil)
       this.hasSigil = this.checkHasSigils();
+      this.isTrusting = this.hasSigil;
     }, 500);
   }
 
   private checkHasSigils() {
-    if (!this.sigils) return false;
+    if (!this.sigil) return false;
 
-    const hasSigil = this.sigils.toNumber() !== 0;
+    const hasSigil = this.sigil.toNumber() !== 0;
     return hasSigil;
   }
 
@@ -93,11 +96,6 @@ export class Profile {
   }
 
   private follow() {
-    // Lit Actions
-
-    // sigil
-
-    // orbis follow
     this.orbisService.followUser(this.did);
   }
 
@@ -130,6 +128,6 @@ export class Profile {
     this.isFollowing = false;
     this.isTrusting = false;
     this.hasSigil = false;
-    this.sigils = undefined;
+    this.sigil = undefined;
   }
 }

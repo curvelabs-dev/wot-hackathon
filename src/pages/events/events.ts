@@ -1,5 +1,6 @@
 import { autoinject, computedFrom } from "aurelia-framework";
 import { useDidToAddress } from "modules/did";
+import { TrustSigilContractService } from "services/contracts/TrustSigilContractService";
 import { ContractsService } from "services/ContractsService";
 import { OrbisService } from "services/OrbisService";
 import { WalletService } from "services/WalletService";
@@ -15,7 +16,7 @@ export class Events {
   private newEventTime: string;
   private newEventUrl: string;
   private newEventAttendees: string;
-  private numberOfTrustees: number;
+  private numberOfTrustees = 0;
   private joinEventThreshold = 3;
 
   @computedFrom("numberOfTrustees", "joinEventThreshold")
@@ -27,7 +28,8 @@ export class Events {
   constructor(
     private walletService: WalletService,
     private orbisService: OrbisService,
-    private contractsService: ContractsService
+    private contractsService: ContractsService,
+    private trustSigilContractService: TrustSigilContractService
   ) {}
 
   attached() {
@@ -55,7 +57,7 @@ export class Events {
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: events.ts ~ line 38 ~ groupMembers', groupMembers)
 
     // 2. All the sigils from Contract Event
-    const events = await this.contractsService.getAllEventsFromTrustSigil();
+    const events = await this.trustSigilContractService.getEvents();
     // const events = EVENTS;
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: events.ts ~ line 42 ~ events', events)
 
