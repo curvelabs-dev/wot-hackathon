@@ -17,8 +17,10 @@ export class Profile {
   @bindable did: DID;
 
   didChanged(newValue) {
-    this.resetVars()
+    this.resetVars();
     this.attached();
+
+    this.did = newValue;
   }
 
   private isFollowing: boolean;
@@ -28,7 +30,9 @@ export class Profile {
 
   @computedFrom("did", "orbisService.connectedUser.did")
   get isSameUser() {
-    const isSame = this.orbisService.connectedUser?.did === this.did;
+    const isSame =
+      this.orbisService.connectedUser?.did.toLowerCase() ===
+      this.did.toLowerCase();
     return isSame;
   }
 

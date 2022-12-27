@@ -6,6 +6,7 @@ import Web3Modal from "web3modal";
 
 import { Address, DID } from "types";
 import { convertToDid } from "modules/did";
+import { EthereumService } from "./EthereumService";
 
 export enum Networks {
   Ethereum = "ethereum",
@@ -114,7 +115,7 @@ export class WalletService {
         );
         this.defaultAccountAddress = await this.getDefaultAccountAddress();
         /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: WalletService.ts ~ line 110 ~ this.defaultAccountAddress', this.defaultAccountAddress)
-        this.defaultAccountDid = convertToDid(this.defaultAccountAddress)
+        this.defaultAccountDid = convertToDid(this.defaultAccountAddress, WalletService.chainIdByName[WalletService.targetedNetwork])
       }
     } catch (error) {
       console.log(

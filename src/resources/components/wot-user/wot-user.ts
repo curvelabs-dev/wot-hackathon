@@ -38,7 +38,6 @@ export class WotUser {
       addressLength - 4,
       addressLength
     )}`;
-      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: wot-user.ts ~ line 43 ~ this.shortenedAddress', this.shortenedAddress)
   }
 
   private publishSelectedUser(): void {
