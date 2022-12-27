@@ -69,7 +69,10 @@
             <div class="eventHeader__body">
               <div class="eventCard__createdBy">
                 <div class="eventCard__createdTitle">Created by</div>
-                <wot-user did.bind="walletService.defaultAccountDid"></wot-user>
+                <wot-user
+                  if.bind="walletService.defaultAccountDid"
+                  did.bind="walletService.defaultAccountDid"
+                ></wot-user>
               </div>
               <div class="eventCard__createdAt">
                 <div class="eventCard__createdTitle">Created</div>
@@ -99,8 +102,15 @@
 
           <footer class="eventCard__footer">
             <button class="btn purple">View Event (TODO)</button>
-            <button class="btn purple">Join (TODO)</button>
+            <button class="btn purple ${disableJoinButton ? 'disabled' : ''}">
+              Join (TODO)
+            </button>
           </footer>
+
+          <section class="eventCard__joinCriteria">
+            To join you need to at least trust
+            ${numberOfTrustees}/${joinEventThreshold} participants.
+          </section>
         </div>
       </div>
     </div>

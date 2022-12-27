@@ -11,6 +11,7 @@ import { isLocalhostNetwork } from "modules/networks";
 import { Address, IStandardEvent } from "types";
 import { TrustSigil } from "contracts/types";
 import { EthereumService } from "./EthereumService";
+import { SigilMintedEvent } from "contracts/types/contracts/TrustSigil";
 
 @autoinject
 export class ContractsService {
@@ -38,12 +39,19 @@ export class ContractsService {
     TrustSigilContract.on(SigilMinted, this.handleSigilMinted);
   }
 
-  public async getAllEventsFromTrustSigil(): Promise<void> {
+  public async getAllEventsFromTrustSigil(): Promise<SigilMintedEvent[]> {
     const TrustSigilContract = await this.getTrustSigilContract();
     const SigilMinted = TrustSigilContract.filters.SigilMinted();
-    this.filterEventsInBlocks(TrustSigilContract, SigilMinted, 0, (events) => {
-      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: ContractsService.ts ~ line 45 ~ events', events)
-    })
+    return new Promise((resolve) => {
+      this.filterEventsInBlocks<SigilMintedEvent>(
+        TrustSigilContract,
+        SigilMinted,
+        0,
+        (events) => {
+          resolve(events);
+        }
+      );
+    });
   }
 
   public unsubscribeEvents(): void {
@@ -170,7 +178,7 @@ export class ContractsService {
     contract: any,
     filter: unknown,
     startingBlockNumber: number,
-    handler: (event: Array<IStandardEvent<TEventArgs>>) => void
+    handler: (event: Array<TEventArgs>) => void
   ): Promise<void> {
     const lastBlock = await this.ethereumService.getLastBlock();
     if (lastBlock === null) {
@@ -192,7 +200,7 @@ export class ContractsService {
       const endBlock = startingBlock + blocksize + 1;
       await contract
         .queryFilter(filter, startingBlock, endBlock)
-        .then((events: Array<IStandardEvent<TEventArgs>>): void => {
+        .then((events: Array<TEventArgs>): void => {
           if (events?.length) {
             handler(events);
           }

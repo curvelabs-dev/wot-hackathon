@@ -56,7 +56,7 @@ export class Profile {
       //   this.did
       // );
       this.isFollowing = true;
-      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 26 ~ this.isFollowing', this.isFollowing)
+      // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 26 ~ this.isFollowing', this.isFollowing)
 
       const getTrustSigilContract =
         await this.contractsService.getTrustSigilContract();
@@ -65,7 +65,7 @@ export class Profile {
         useDidToAddress(this.did),
         this.walletService.defaultAccountAddress
       );
-      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 57 ~ this.sigils', this.sigils)
+      // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 57 ~ this.sigils', this.sigils)
       this.hasSigil = this.checkHasSigils();
     }, 500);
   }
@@ -115,7 +115,6 @@ export class Profile {
 
     const TrustSigilContract =
       await this.contractsService.getTrustSigilContract();
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: app.ts ~ line 68 ~ contract', TrustSigilContract)
     const receipientAddress = useDidToAddress(this.did);
     const txResponse = await TrustSigilContract.mintSigil(
       receipientAddress,

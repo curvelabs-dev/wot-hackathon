@@ -799,6 +799,10 @@ ul.tertiary li {
   background: #6C6AFB;
 }
 
+.btn.disabled:hover {
+  background: var(--color-border-secondary)
+}
+
 .btn.yellow {
   background: linear-gradient(107.56deg, #E0EA7E 46.35%, #7FEACA 100%);
   color: var(--color-background) !important;
