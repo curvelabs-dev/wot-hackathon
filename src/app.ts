@@ -1,6 +1,6 @@
 import { EventAggregator, Subscription } from "aurelia-event-aggregator";
 import { autoinject, PLATFORM } from "aurelia-framework";
-import { Router, RouterConfiguration } from "aurelia-router";
+import { NavModel, Router, RouterConfiguration } from "aurelia-router";
 import LitConnectModal from "lit-connect-modal";
 import WalletConnectProvider from "@walletconnect/ethereum-provider";
 
@@ -31,6 +31,7 @@ export class App {
   private connectionStatus: boolean;
   private selectedUserDid: DID;
   private subscriptions: Subscription[] = [];
+  private navigationItem: NavModel;
 
   constructor(
     private orbisService: OrbisService,
@@ -90,6 +91,9 @@ export class App {
     if (!this._DevService.isProduction) {
       // this._DevService.setupSigils();
     }
+
+    // @ts-ignore
+    window.app = this;
 
     // await this.litActionsService.isFollowing_rawOrbisApi(litActionCode);
 
@@ -190,17 +194,6 @@ export class App {
           },
         },
       },
-      {
-        nav: true,
-        name: "group",
-        route: ["group"],
-        title: "Group",
-        viewPorts: {
-          default: {
-            moduleId: PLATFORM.moduleName("./pages/group/group"),
-          },
-        },
-      },
       // {
       //   nav: false,
       //   name: "profile",
@@ -224,6 +217,37 @@ export class App {
           default: {
             moduleId: PLATFORM.moduleName("./pages/events/events"),
           },
+        },
+        settings: {
+          isNavgiationChip: true,
+        },
+      },
+      {
+        nav: true,
+        name: "sigils",
+        route: ["sigils"],
+        title: "Sigils",
+        viewPorts: {
+          default: {
+            moduleId: PLATFORM.moduleName("./pages/sigils/sigils"),
+          },
+        },
+        settings: {
+          isNavgiationChip: true,
+        },
+      },
+      {
+        nav: true,
+        name: "group",
+        route: ["groups"],
+        title: "Groups",
+        viewPorts: {
+          default: {
+            moduleId: PLATFORM.moduleName("./pages/group/group"),
+          },
+        },
+        settings: {
+          isNavgiationChip: true,
         },
       },
       {

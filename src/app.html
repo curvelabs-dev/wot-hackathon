@@ -122,6 +122,47 @@
     <div class="main-container">
       <!-- main middle -->
       <div class="main dashed-card">
+        <!-- Navigation Chips -->
+        <div class="navigationChips__container">
+          <a
+            repeat.for="navigationItem of router.navigation"
+            if.bind="navigationItem.settings.isNavgiationChip"
+            class="navigationChip
+              ${navigationItem.isActive ? 'active' : ''}
+            "
+            click.delegate="router.navigate(navigationItem.href)"
+            href.bind="navigationItem.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            >${navigationItem.title}</a
+          >
+
+          <!-- <a
+            class="navigationChip"
+            click.delegate="router.navigate('/events')"
+            href="/events"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Events</a
+          >
+          <a
+            class="navigationChip"
+            click.delegate="router.navigate('/')"
+            href=""
+            target="_blank"
+            rel="noopener noreferrer"
+            >Sigils</a
+          >
+          <a
+            class="navigationChip"
+            click.delegate="router.navigate('/')"
+            href=""
+            target="_blank"
+            rel="noopener noreferrer"
+            >Groups</a
+          > -->
+        </div>
+
         <router-view></router-view>
       </div>
 

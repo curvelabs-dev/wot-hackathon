@@ -1,6 +1,6 @@
-import "./events.scss";
+import "./sigils.scss";
 
-export class Events {
+export class Sigils {
   isCreateEvent = false;
 
   private newEventName: string;
