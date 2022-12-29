@@ -4,6 +4,15 @@ This project is bootstrapped by [aurelia-cli](https://github.com/aurelia/cli).
 
 For more information, go to https://aurelia.io/docs/cli/webpack
 
+## Wot instructions
+- Showcasing
+  - FE
+    - Run disconnected (see _DevService)
+  - BE
+    - comment out assertion when #mintSigil
+    - npx hardhat node (Terminal 1)
+    - npx hardhat setup:testing --network localhost (Terminal 2)
+
 ## Run dev app
 
 Run `npm start`, then open `http://localhost:8080`
