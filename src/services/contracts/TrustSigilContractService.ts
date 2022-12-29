@@ -2,21 +2,38 @@ import { autoinject, singleton } from "aurelia-framework";
 import { EventAggregator } from "aurelia-event-aggregator";
 import { ContractsService } from "services/ContractsService";
 import { SigilMintedEvent } from "contracts/types/contracts/TrustSigil";
+import { Utils } from "shared/utils";
 
 const SigilMintedEvent = "SigilMintedEvent";
 
 @autoinject
 @singleton(false)
 export class TrustSigilContractService {
-  private events: SigilMintedEvent[];
+  private initializing = true;
+  private initializedPromise: Promise<unknown>;
+  private events: SigilMintedEvent[] = [];
 
   constructor(
     private contractsService: ContractsService,
     private eventAggregator: EventAggregator
-  ) {}
+  ) {
+    this.initializedPromise = Utils.waitUntilTrue(
+      () => !this.initializing,
+      9999999999
+    );
+  }
+
+  public async ensureLoaded() {
+    await this.contractsService.ensureLoaded();
+
+    return this.initializedPromise;
+  }
 
   public async init() {
+    this.contractsService.ensureLoaded();
+
     await this.hydrateEvents();
+    this.initializing = false;
   }
 
   public async getEvents() {
@@ -67,7 +84,22 @@ export class TrustSigilContractService {
     return wasAdded;
   }
 
+  public async getAllEventsFromTrustSigil() {
+    const TrustSigilContract =
+      await this.contractsService.getTrustSigilContract();
+    const SigilMinted = TrustSigilContract.filters.SigilMinted();
+
+    await this.contractsService.filterEventsInBlocks<SigilMintedEvent>(
+      TrustSigilContract,
+      SigilMinted,
+      0,
+      (events) => {
+        this.events = events;
+      }
+    );
+  }
+
   private async hydrateEvents() {
-    this.events = await this.contractsService.getAllEventsFromTrustSigil();
+    await this.getAllEventsFromTrustSigil();
   }
 }

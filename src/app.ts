@@ -153,16 +153,16 @@ export class App {
 
   private checkReadyForLaunch() {
     myExpect(
-      !!this.connectionStatus,
+      this.connectionStatus,
       "1. Not connected to Wallet. Press connect button."
     );
     myExpect(
       !!this._DevService.runConnected,
-      "2. _DevService.runConnected should be true"
+      "2.1 _DevService.runConnected should be true"
     );
     myExpect(
       this._DevService.isProduction,
-      "2. _DevService.isProduction should be true"
+      "2.2 _DevService.isProduction should be true"
     );
     myExpect(!!this.orbisService.connectedUser.did, "3. Should have Orbis Did");
     const orbisAndWalletSame =
@@ -172,6 +172,8 @@ export class App {
       orbisAndWalletSame,
       `4. Wallet and Orbis should be same. Was\n Wallet: ${this.walletService.defaultAccountDid} \n Orbis: ${this.orbisService.connectedUser.did}`
     );
+
+    console.log('No warning? Good to go!')
   }
 
   private configureRouter(config: RouterConfiguration, router: Router) {

@@ -59,7 +59,6 @@ export class WalletService {
     //   this.provider
     // );
     // this.defaultAccountAddress = await this.getDefaultAccountAddress();
-    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: WalletService.ts ~ line 48 ~ this.defaultAccountAddress', this.defaultAccountAddress)
 
     if (!this.walletProvider) {
       this.ensureWeb3Modal();

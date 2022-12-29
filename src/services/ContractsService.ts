@@ -12,9 +12,13 @@ import { Address, IStandardEvent } from "types";
 import { TrustSigil } from "contracts/types";
 import { EthereumService } from "./EthereumService";
 import { SigilMintedEvent } from "contracts/types/contracts/TrustSigil";
+import { Utils } from "shared/utils";
 
 @autoinject
 export class ContractsService {
+  private initializing = true;
+  private initializedPromise: Promise<unknown>;
+
   private static Contracts = new Map<ContractNames, Contract>([
     [ContractNames.BadgerCore, null],
     [ContractNames.OrbisBridge, null],
@@ -23,28 +27,22 @@ export class ContractsService {
 
   private initializingContracts: Promise<void>;
   private initializingContractsResolver: () => void;
+  events: SigilMintedEvent[];
 
   constructor(
     private eventAggregator: EventAggregator,
     private ethereumService: EthereumService,
     private walletService: WalletService
   ) {
+    this.initializedPromise = Utils.waitUntilTrue(
+      () => !this.initializing,
+      9999999999
+    );
     ContractsService.Contracts.delete(ContractNames.BadgerCore);
   }
 
-  public async getAllEventsFromTrustSigil(): Promise<SigilMintedEvent[]> {
-    const TrustSigilContract = await this.getTrustSigilContract();
-    const SigilMinted = TrustSigilContract.filters.SigilMinted();
-    return new Promise((resolve) => {
-      this.filterEventsInBlocks<SigilMintedEvent>(
-        TrustSigilContract,
-        SigilMinted,
-        0,
-        (events) => {
-          resolve(events);
-        }
-      );
-    });
+  public async ensureLoaded() {
+    return this.initializedPromise;
   }
 
   public unsubscribeEvents(): void {
@@ -69,7 +67,7 @@ export class ContractsService {
     this.initializingContractsResolver = null;
   }
 
-  private async assertContracts(): Promise<void> {
+  public async assertContracts(): Promise<void> {
     return this.initializingContracts;
   }
 
@@ -127,6 +125,7 @@ export class ContractsService {
 
     this.eventAggregator.publish("Contracts.Changed");
 
+    this.initializing = false;
     this.resolveInitializingContracts();
   }
 
@@ -134,6 +133,7 @@ export class ContractsService {
     contractName: ContractNames
   ): Promise<Contract & any> {
     await this.assertContracts();
+    await this.ensureLoaded();
     return ContractsService.Contracts.get(contractName);
   }
 

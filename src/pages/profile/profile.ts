@@ -7,6 +7,7 @@ import { ContractsService } from "services/ContractsService";
 import { LitActionsService } from "services/LitActionsService";
 import { OrbisService } from "services/OrbisService";
 import { WalletService } from "services/WalletService";
+import { _DevService } from "services/_DevService";
 import { TOKEN_ID } from "shared/constants";
 import { DID } from "types";
 
@@ -44,7 +45,8 @@ export class Profile {
     private litActionsService: LitActionsService,
     private contractsService: ContractsService,
     private trustSigilContractService: TrustSigilContractService,
-    private walletService: WalletService
+    private walletService: WalletService,
+    private _DevService: _DevService
   ) {}
 
   // async activate(params: { did: DID }): Promise<void> {
@@ -52,27 +54,29 @@ export class Profile {
   // }
 
   async attached() {
-    // Hack to wait for app.ts#attached to finish
-    window.setTimeout(async () => {
-      // this.isFollowing = await this.orbisService.isFollowing(
-      //   // this.isFollowing = await this.orbisService.rawIsFollowing(
-      //   this.orbisService.connectedUser.did,
-      //   this.did
-      // );
-      this.isFollowing = true;
-      // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 26 ~ this.isFollowing', this.isFollowing)
+    await this.orbisService.ensureLoaded();
+    await this.contractsService.ensureLoaded();
+    await this.trustSigilContractService.ensureLoaded();
 
-      const getTrustSigilContract =
-        await this.contractsService.getTrustSigilContract();
-      this.sigil = await getTrustSigilContract.getSigil(
-        TOKEN_ID,
-        useDidToAddress(this.did),
-        this.walletService.defaultAccountAddress
-      );
-      /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 57 ~ this.sigils', this.sigil)
-      this.hasSigil = this.checkHasSigils();
-      this.isTrusting = this.hasSigil;
-    }, 500);
+    // Hack to wait for app.ts#attached to finish
+    // this.isFollowing = await this.orbisService.isFollowing(
+    //   // this.isFollowing = await this.orbisService.rawIsFollowing(
+    //   this.orbisService.connectedUser.did,
+    //   this.did
+    // );
+    this.isFollowing = true;
+    // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 26 ~ this.isFollowing', this.isFollowing)
+
+    const getTrustSigilContract =
+      await this.contractsService.getTrustSigilContract();
+    this.sigil = await getTrustSigilContract.getSigil(
+      TOKEN_ID,
+      useDidToAddress(this.did),
+      this.walletService.defaultAccountAddress
+    );
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 57 ~ this.sigils', this.sigil)
+    this.hasSigil = this.checkHasSigils();
+    this.isTrusting = this.hasSigil;
   }
 
   private checkHasSigils() {
@@ -99,6 +103,7 @@ export class Profile {
 
   private follow() {
     this.orbisService.followUser(this.did);
+    this.isFollowing = true;
   }
 
   private unfollow() {

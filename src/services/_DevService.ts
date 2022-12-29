@@ -12,7 +12,7 @@ export class _DevService {
 
   public OrbisService: OrbisService;
   public get isOrbisActive() {
-    const is = this.OrbisService.orbis && this.OrbisService.initiated;
+    const is = this.OrbisService.orbis && this.OrbisService.initializing;
     return is;
   }
 

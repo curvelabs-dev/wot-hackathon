@@ -34,22 +34,24 @@ export class Events {
     private trustSigilContractService: TrustSigilContractService
   ) {}
 
-  attached() {
-    window.setTimeout(async () => {
-      this.numberOfTrustees = await this.getNumberOfTrustees();
-      this.subscriptions.push(
-        this.trustSigilContractService.subscribeSigilMintedEvent(
-          async (sigilMintedEvent) => {
-            const wasAdded =
-              this.trustSigilContractService.maybeAddNewSigilMintEvent(
-                sigilMintedEvent
-              );
-            if (!wasAdded) return;
-            this.numberOfTrustees = await this.getNumberOfTrustees();
-          }
-        )
-      );
-    }, 500);
+  async attached() {
+    await this.orbisService.ensureLoaded();
+    await this.contractsService.ensureLoaded();
+    await this.trustSigilContractService.ensureLoaded();
+
+    this.numberOfTrustees = await this.getNumberOfTrustees();
+    this.subscriptions.push(
+      this.trustSigilContractService.subscribeSigilMintedEvent(
+        async (sigilMintedEvent) => {
+          const wasAdded =
+            this.trustSigilContractService.maybeAddNewSigilMintEvent(
+              sigilMintedEvent
+            );
+          if (!wasAdded) return;
+          this.numberOfTrustees = await this.getNumberOfTrustees();
+        }
+      )
+    );
   }
 
   detached() {

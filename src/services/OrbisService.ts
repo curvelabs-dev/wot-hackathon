@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Orbis } from "@orbisclub/orbis-sdk";
-import { singleton } from "aurelia-framework";
+import { observable, singleton } from "aurelia-framework";
 import { CONNECTED_USER } from "shared/fixtures";
 import { ORBIS_GROUP_MEMBERS } from "shared/fixtures";
 import { DID, GroupMemberStream, OrbisUser } from "types";
 
 import { _DevService } from "./_DevService";
 import ENV from "../../env.json";
+import { Utils } from "shared/utils";
 
 const group_id =
   "kjzl6cwe1jw147lv17xkl7679toynk5lkbotwhcabvgho0qumzjsyzpay2ug9ei"; // wot-hackathon
@@ -49,12 +50,13 @@ class MockOrbis {
 @singleton(false)
 export class OrbisService {
   public orbis: IOrbis;
-  public initiated = false;
+  public initializing = true;
   // @ts-ignore
   public connectedUser: OrbisUser;
   public groupMembers: GroupMemberStream[];
   public baseUrl: string;
   public apiKey: string;
+  private initializedPromise: Promise<unknown>;
 
   constructor(private _DevService: _DevService) {
     this._DevService.OrbisService = this;
@@ -64,6 +66,15 @@ export class OrbisService {
     this.baseUrl = this.orbis.api.restUrl;
     // @ts-ignore
     this.apiKey = this.orbis.api.supabaseKey;
+
+    this.initializedPromise = Utils.waitUntilTrue(
+      () => !this.initializing,
+      9999999999
+    );
+  }
+
+  public async ensureLoaded() {
+    return this.initializedPromise;
   }
 
   async initOrbisData(provider) {
@@ -71,8 +82,7 @@ export class OrbisService {
     this.connectedUser = await this.loadOrbisUser();
     // await this.loadOrbisGroup();
     this.groupMembers = await this.loadOrbisGroupMember();
-
-    this.initiated = true;
+    this.initializing = false;
   }
 
   async loadOrbisUser() {
