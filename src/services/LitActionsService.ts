@@ -95,8 +95,11 @@ export class LitActionsService {
         /* prettier-ignore */ console.log('------------------------------------------------------------------------------------------')
         console.log("ethPersonalSignMessageEcdsa")
         /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 54 ~ messageHashBinary', messageHashBinary)
-        const sigShare = await LitActions.ethPersonalSignMessageEcdsa({
-          message: messageHashBinary,
+        // const sigShare = await LitActions.ethPersonalSignMessageEcdsa({
+        //   message: messageHashBinary,
+
+        const sigShare = await LitActions.signEcdsa({
+          toSign: messageHashBinary,
           publicKey,
           sigName
         });
