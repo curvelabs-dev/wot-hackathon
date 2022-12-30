@@ -179,6 +179,11 @@ export class App {
     console.log("No warning? Good to go!");
   }
 
+  private changePkp(newPkp: string) {
+    this.litActionsService.pkp = newPkp
+    console.log('Updated pkp: ', newPkp)
+  }
+
   private configureRouter(config: RouterConfiguration, router: Router) {
     config.title = " ";
     config.options.pushState = true;

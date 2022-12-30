@@ -18,6 +18,7 @@ import {
 @autoinject
 export class LitActionsService {
   public authSig;
+  public pkp = process.env.publicKey;
 
   private litNodeClient;
 
@@ -90,13 +91,7 @@ export class LitActionsService {
 
         const isFollowing = response[0].active === "true";
 
-        // all the params (toSign, publicKey, sigName) are passed in from the LitJsSdk.executeJs() function
-        /* prettier-ignore */ console.log('------------------------------------------------------------------------------------------')
-        console.log("ethPersonalSignMessageEcdsa")
-        /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 54 ~ messageHashBinary', messageHashBinary)
-        // const sigShare = await LitActions.ethPersonalSignMessageEcdsa({
-        //   message: messageHashBinary,
-
+        console.log("signEcdsa")
         const sigShare = await LitActions.signEcdsa({
           toSign: messageHashBinary,
           publicKey,
@@ -106,13 +101,15 @@ export class LitActionsService {
       go();
     `;
 
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: LitActionsService.ts ~ line 111 ~ this.pkp', this.pkp)
+
     const signatures = (await this.litNodeClient.executeJs({
       code,
       authSig: this.authSig,
       // all jsParams can be used anywhere in your litActionCode
       jsParams: {
         messageHashBinary,
-        publicKey: process.env.publicKey,
+        publicKey: this.pkp,
         sigName: "sig1",
       },
     })) as ILitActionSignatureResponse;

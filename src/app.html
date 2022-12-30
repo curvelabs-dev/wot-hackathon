@@ -15,7 +15,7 @@
       </div>
     </section>
 
-    <button click.delegate="checkReadyForLaunch()">Ready for Launch</button>
+    <!-- <button click.delegate="checkReadyForLaunch()">Ready for Launch</button> -->
 
     <section>
       <button click.delegate="orbisService.logout()">Orbis Logout</button>
@@ -26,6 +26,13 @@
       <input value.bind="newGroupId" placeholder="Orbis group id" />
       <button click.delegate="orbisService.reloadGroup(newGroupId)">
         Reload Orbis group
+      </button>
+    </section>
+
+    <section>
+      <input value.bind="newPkp" placeholder="Pkp" />
+      <button click.delegate="changePkp(newPkp)">
+        Update pkp
       </button>
     </section>
   </div>
