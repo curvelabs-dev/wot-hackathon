@@ -7,8 +7,8 @@ import { OrbisService } from "./OrbisService";
 @autoinject
 @singleton()
 export class _DevService {
-  public runConnected = false;
-  public isProduction = false;
+  public runConnected = true;
+  public isProduction = true;
 
   public OrbisService: OrbisService;
   public get isOrbisActive() {

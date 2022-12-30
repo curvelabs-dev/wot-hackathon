@@ -8,7 +8,10 @@ import {
   ContractNames,
   ContractsDeploymentProvider,
 } from "services/ContractsDeploymentProvider";
-import { OrbisService } from "services/OrbisService";
+import {
+  OrbisService,
+  WOT_HACKATHON_ORBIS_GROUP_ID,
+} from "services/OrbisService";
 import { WalletService } from "services/WalletService";
 import { _DevService } from "services/_DevService";
 import { LitActionsService } from "services/LitActionsService";
@@ -76,7 +79,7 @@ export class App {
 
     // Second
     await this.contractsService.initializeContracts();
-    await this.orbisService.initOrbisData(this.walletService.readOnlyProvider);
+    await this.orbisService.initOrbisData(WOT_HACKATHON_ORBIS_GROUP_ID);
     this.subscribeEvents();
     this.initVars();
 
@@ -173,7 +176,7 @@ export class App {
       `4. Wallet and Orbis should be same. Was\n Wallet: ${this.walletService.defaultAccountDid} \n Orbis: ${this.orbisService.connectedUser.did}`
     );
 
-    console.log('No warning? Good to go!')
+    console.log("No warning? Good to go!");
   }
 
   private configureRouter(config: RouterConfiguration, router: Router) {

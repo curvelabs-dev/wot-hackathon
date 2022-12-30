@@ -8,7 +8,7 @@ import { DID, GroupMemberStream, OrbisUser } from "types";
 import { _DevService } from "./_DevService";
 import { Utils } from "shared/utils";
 
-const group_id =
+export const WOT_HACKATHON_ORBIS_GROUP_ID =
   "kjzl6cwe1jw147lv17xkl7679toynk5lkbotwhcabvgho0qumzjsyzpay2ug9ei"; // wot-hackathon
 
 class MockOrbis {
@@ -76,11 +76,11 @@ export class OrbisService {
     return this.initializedPromise;
   }
 
-  async initOrbisData(provider) {
+  async initOrbisData(groupId: string) {
     // @ts-ignore
     this.connectedUser = await this.loadOrbisUser();
     // await this.loadOrbisGroup();
-    this.groupMembers = await this.loadOrbisGroupMember();
+    this.groupMembers = await this.loadOrbisGroupMember(groupId);
     this.initializing = false;
   }
 
@@ -90,13 +90,13 @@ export class OrbisService {
     return user;
   }
 
-  async loadOrbisGroup() {
-    const { data, error } = await this.orbis.getGroup(group_id);
+  async loadOrbisGroup(groupId: string) {
+    const { data, error } = await this.orbis.getGroup(groupId);
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: app.ts ~ line 18 ~ data', data)
   }
 
-  async loadOrbisGroupMember(): Promise<GroupMemberStream[]> {
-    const { data, error } = await this.orbis.getGroupMembers(group_id);
+  async loadOrbisGroupMember(groupId: string): Promise<GroupMemberStream[]> {
+    const { data, error } = await this.orbis.getGroupMembers(groupId);
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 45 ~ data', data)
     // const members = data[0].collection
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 44 ~ members', members)
@@ -166,6 +166,26 @@ export class OrbisService {
     const res = await this.orbis?.setFollow(did, false);
     return res;
   }
+
+  public async connect() {
+    // @ts-ignore
+    const response = await this.orbis.connect();
+    /* prettier-ignore */ console.log('Connect response', response)
+    this.connectedUser = {
+      did: response.did,
+      metadata: response.details.metadata,
+    };
+  }
+
+  public async logout() {
+    const response = await this.orbis.logout();
+    /* prettier-ignore */ console.log('Logout response', response)
+  }
+
+  public async reloadGroup(newGroupId: string) {
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 186 ~ newGroupId', newGroupId)
+    await this.initOrbisData(newGroupId)
+  }
 }
 
 async function checkUserIsConnected(orbis) {
@@ -173,7 +193,7 @@ async function checkUserIsConnected(orbis) {
   /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 151 ~ res', res)
 
   if (res === false) {
-    const temp = await this.orbis.connect();
+    const temp = await orbis.connect();
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: OrbisService.ts ~ line 156 ~ temp', temp)
   }
 

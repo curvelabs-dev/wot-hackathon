@@ -59,12 +59,12 @@ export class Profile {
     await this.trustSigilContractService.ensureLoaded();
 
     // Hack to wait for app.ts#attached to finish
-    // this.isFollowing = await this.orbisService.isFollowing(
-    //   // this.isFollowing = await this.orbisService.rawIsFollowing(
-    //   this.orbisService.connectedUser.did,
-    //   this.did
-    // );
-    this.isFollowing = true;
+    this.isFollowing = await this.orbisService.isFollowing(
+      // this.isFollowing = await this.orbisService.rawIsFollowing(
+      this.orbisService.connectedUser.did,
+      this.did
+    );
+    // this.isFollowing = true;
     // /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: profile.ts ~ line 26 ~ this.isFollowing', this.isFollowing)
 
     const getTrustSigilContract =
@@ -101,13 +101,17 @@ export class Profile {
     this.follow();
   }
 
-  private follow() {
-    this.orbisService.followUser(this.did);
+  private async follow() {
+    // const response = await this.orbisService.followUser(this.did);
+    // console.log('Follow Response: ', response)
     this.isFollowing = true;
   }
 
-  private unfollow() {
-    this.orbisService.followUser(this.did);
+  private async unfollow() {
+    // const response = await this.orbisService.unfollowUser(this.did);
+    // console.log('Unfollow Response: ', response)
+
+    this.isFollowing = false
   }
 
   private async trust() {

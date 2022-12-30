@@ -16,6 +16,18 @@
     </section>
 
     <button click.delegate="checkReadyForLaunch()">Ready for Launch</button>
+
+    <section>
+      <button click.delegate="orbisService.logout()">Orbis Logout</button>
+      <button click.delegate="orbisService.connect()">Orbis Connect</button>
+    </section>
+
+    <section>
+      <input value.bind="newGroupId" placeholder="Orbis group id" />
+      <button click.delegate="orbisService.reloadGroup(newGroupId)">
+        Reload Orbis group
+      </button>
+    </section>
   </div>
 
   <!-- Main -->
@@ -127,9 +139,7 @@
           <a
             repeat.for="navigationItem of router.navigation"
             if.bind="navigationItem.settings.isNavgiationChip"
-            class="navigationChip
-              ${navigationItem.isActive ? 'active' : ''}
-            "
+            class="navigationChip ${navigationItem.isActive ? 'active' : ''}"
             click.delegate="router.navigate(navigationItem.href)"
             href.bind="navigationItem.href"
             target="_blank"
