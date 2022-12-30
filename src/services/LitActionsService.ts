@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { OrbisService } from "./OrbisService";
-import { publicKey } from "../../env.json";
 import { autoinject } from "aurelia-framework";
 import { DID, ILitActionSignatureResponse } from "types";
 import { useDidToAddress } from "modules/did";
@@ -113,7 +112,7 @@ export class LitActionsService {
       // all jsParams can be used anywhere in your litActionCode
       jsParams: {
         messageHashBinary,
-        publicKey: publicKey,
+        publicKey: process.env.publicKey,
         sigName: "sig1",
       },
     })) as ILitActionSignatureResponse;

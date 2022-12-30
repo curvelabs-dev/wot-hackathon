@@ -8,6 +8,9 @@ const project = require('./aurelia_project/aurelia.json');
 const { AureliaPlugin } = require('aurelia-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+require("dotenv").config({ path: `.env` });
+
+/* prettier-ignore */ console.log('>>>> _ >>>> ~ file: webpack.config.js ~ line 14 ~ process.env.publicKey', process.env.publicKey)
 
 // config helpers:
 const ensureArray = (config) => config && (Array.isArray(config) ? config : [config]) || [];
@@ -285,6 +288,7 @@ module.exports = ({ production }, { analyze, hmr, port, host }) => ({
      * remove those before the webpack build. In that case consider disabling the plugin, and instead use something like
      * `del` (https://www.npmjs.com/package/del), or `rimraf` (https://www.npmjs.com/package/rimraf).
      */
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new webpack.EnvironmentPlugin(process.env),
   ]
 });

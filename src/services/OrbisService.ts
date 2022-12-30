@@ -6,7 +6,6 @@ import { ORBIS_GROUP_MEMBERS } from "shared/fixtures";
 import { DID, GroupMemberStream, OrbisUser } from "types";
 
 import { _DevService } from "./_DevService";
-import ENV from "../../env.json";
 import { Utils } from "shared/utils";
 
 const group_id =
@@ -16,7 +15,7 @@ class MockOrbis {
   public api = {
     restUrl: "https://ylgfjdlgyjmdikqavpcj.supabase.co/rest/v1",
     // @ts-ignore
-    supabaseKey: ENV.supabaseKey,
+    supabaseKey: process.env.supabaseKey,
   };
 
   isConnected() {
